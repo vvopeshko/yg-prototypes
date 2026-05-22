@@ -1,0 +1,1679 @@
+<!DOCTYPE html>
+<html lang="ru" data-density="regular">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Профиль игрока v2 — Прототип</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   Design Tokens & Base
+   ============================================================ */
+:root {
+  --brand: #6B58FF;
+  --brand-soft: #A7A0FF;
+  --brand-tint: #251E41;
+  --brand-tint-2: #1A1530;
+  --bg: #141414;
+  --bg-2: #1A1A1A;
+  --surface: #1F1F1F;
+  --surface-2: #242424;
+  --surface-3: #2E2E2E;
+  --line: rgba(255,255,255,0.08);
+  --line-strong: rgba(255,255,255,0.14);
+  --text: #EBEBEB;
+  --text-2: #B8B8B8;
+  --text-3: #8C8C8C;
+  --text-4: #5A5A5A;
+  --danger: #FF5A5A;
+  --warn: #FFB23D;
+  --ok: #3CCB7F;
+  --r-sm: 10px;
+  --r-md: 14px;
+  --r-lg: 20px;
+  --r-xl: 28px;
+  --pad: 16px;
+  --pad-2: 24px;
+  --gap: 16px;
+}
+:root[data-density="compact"] {
+  --pad: 12px;
+  --pad-2: 18px;
+  --gap: 12px;
+}
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Onest', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  font-feature-settings: "ss01" on, "cv11" on;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+body { min-height: 100vh; overflow-x: hidden; }
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: inherit;
+  padding: 0;
+}
+input, textarea { font-family: inherit; color: inherit; }
+a { color: inherit; text-decoration: none; }
+
+/* Typography */
+.h-hero { font-size: 48px; font-weight: 700; letter-spacing: -1.2px; line-height: 1.05; }
+.h-1 { font-size: 32px; font-weight: 600; letter-spacing: -0.6px; line-height: 1.1; }
+.h-2 { font-size: 24px; font-weight: 600; letter-spacing: -0.4px; line-height: 1.15; }
+.h-3 { font-size: 18px; font-weight: 600; letter-spacing: -0.2px; line-height: 1.2; }
+.h-stat { font-size: 22px; font-weight: 600; letter-spacing: -0.4px; line-height: 1.1; }
+.body { font-size: 15px; line-height: 1.4; }
+.small { font-size: 13px; line-height: 1.4; color: var(--text-3); }
+.tiny { font-size: 11px; line-height: 1.3; color: var(--text-3); letter-spacing: 0.02em; text-transform: uppercase; }
+
+/* Layout */
+.app { display: flex; flex-direction: column; min-height: 100vh; }
+.content { padding: 24px 40px 60px; max-width: 1440px; width: 100%; margin: 0 auto; }
+.profile-grid { display: grid; grid-template-columns: 260px 1fr; gap: 32px; margin-top: 28px; }
+
+/* Utility */
+.row { display: flex; align-items: center; gap: var(--gap); }
+.col { display: flex; flex-direction: column; gap: var(--gap); }
+.between { justify-content: space-between; }
+.wrap { flex-wrap: wrap; }
+.grow { flex: 1; min-width: 0; }
+.center { display: flex; align-items: center; justify-content: center; }
+.muted { color: var(--text-3); }
+.dim { color: var(--text-2); }
+.brand-text { color: var(--brand-soft); }
+.truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.divider { height: 1px; background: var(--line); }
+
+/* Card */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  padding: var(--pad-2);
+}
+
+/* Banner */
+.banner {
+  position: relative;
+  border-radius: 28px 28px 0 0;
+  overflow: hidden;
+  height: 380px;
+  max-width: 2560px;
+  width: calc(100vw - 48px);
+  margin-left: calc(50% - 50vw + 24px);
+  padding: 36px 0 40px;
+  display: flex;
+  align-items: flex-end;
+  background:
+    radial-gradient(120% 80% at 80% 80%, rgba(168,60,200,0.55) 0%, transparent 60%),
+    radial-gradient(80% 90% at 25% 30%, rgba(255,110,196,0.35) 0%, transparent 55%),
+    linear-gradient(135deg, #5b2890 0%, #3a1968 60%, #1d0d3e 100%);
+}
+.banner::before {
+  content: "";
+  position: absolute; inset: 0;
+  background-image:
+    radial-gradient(1.5px 1.5px at 12% 18%, rgba(255,255,255,0.7), transparent),
+    radial-gradient(1px 1px at 28% 8%, rgba(255,255,255,0.5), transparent),
+    radial-gradient(1.5px 1.5px at 42% 24%, rgba(255,255,255,0.6), transparent),
+    radial-gradient(1px 1px at 64% 14%, rgba(255,255,255,0.6), transparent),
+    radial-gradient(1.5px 1.5px at 78% 30%, rgba(255,255,255,0.45), transparent),
+    radial-gradient(1px 1px at 88% 12%, rgba(255,255,255,0.6), transparent),
+    radial-gradient(1px 1px at 18% 56%, rgba(255,255,255,0.4), transparent);
+  pointer-events: none;
+}
+.banner::after {
+  content: "";
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, transparent 40%, var(--bg) 100%);
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 8px; height: 40px; padding: 0 18px; border-radius: 999px;
+  font-size: 14px; font-weight: 500; letter-spacing: 0.01em;
+  transition: background 0.15s ease, transform 0.06s ease, color 0.15s ease;
+  white-space: nowrap;
+}
+.btn:active { transform: scale(0.98); }
+.btn-primary { background: var(--brand); color: #fff; }
+.btn-primary:hover { background: #5747e8; }
+.btn-secondary { background: var(--surface-2); color: var(--text); }
+.btn-secondary:hover { background: var(--surface-3); }
+.btn-ghost { background: transparent; color: var(--text); }
+.btn-ghost:hover { background: var(--surface-2); }
+.btn-danger { background: rgba(255,90,90,0.15); color: var(--danger); }
+.btn-danger:hover { background: rgba(255,90,90,0.25); }
+.btn-sm { height: 32px; padding: 0 14px; font-size: 13px; }
+.btn-lg { height: 48px; padding: 0 22px; font-size: 15px; }
+.btn-icon {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 40px; height: 40px; border-radius: 999px;
+  background: var(--surface-2); color: var(--text);
+  transition: background 0.15s ease;
+}
+.btn-icon:hover { background: var(--surface-3); }
+.btn-icon.lg { width: 48px; height: 48px; }
+.btn-glass {
+  background: rgba(255,255,255,0.12);
+  backdrop-filter: blur(20px);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.16);
+}
+.btn-glass:hover { background: rgba(255,255,255,0.2); }
+
+/* Toggle */
+.toggle {
+  position: relative; width: 44px; height: 26px; border-radius: 999px;
+  background: var(--surface-3); transition: background 0.18s ease; flex-shrink: 0;
+}
+.toggle::after {
+  content: ""; position: absolute; top: 3px; left: 3px;
+  width: 20px; height: 20px; border-radius: 50%; background: #fff;
+  transition: transform 0.18s ease;
+}
+.toggle[data-on="true"] { background: var(--brand); }
+.toggle[data-on="true"]::after { transform: translateX(18px); }
+
+/* Input */
+.input, .textarea {
+  width: 100%; background: var(--surface-2);
+  border: 1px solid transparent; border-radius: 12px;
+  padding: 12px 14px; font-size: 14px; color: var(--text); outline: none;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.input:focus, .textarea:focus { border-color: var(--brand); background: var(--bg-2); }
+.input::placeholder, .textarea::placeholder { color: var(--text-4); }
+.textarea { min-height: 96px; resize: vertical; }
+
+/* Tabs */
+.tabs {
+  display: inline-flex; gap: 4px; padding: 4px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 999px;
+}
+.tab {
+  padding: 8px 16px; border-radius: 999px; font-size: 14px; font-weight: 500;
+  color: var(--text-2); transition: color 0.15s ease, background 0.15s ease;
+}
+.tab[data-active="true"] { background: var(--surface-3); color: var(--text); }
+.tab:hover:not([data-active="true"]) { color: var(--text); }
+
+/* Section tabs (sidebar) */
+.section-tab {
+  display: block; width: 100%; text-align: left;
+  font-size: 22px; font-weight: 600; letter-spacing: -0.3px;
+  color: var(--text-4); padding: 14px 18px; border-radius: 14px;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+.section-tab:hover { color: var(--text-2); }
+.section-tab[data-active="true"] {
+  color: var(--brand-soft);
+  background: linear-gradient(90deg, rgba(107,88,255,0.18) 0%, rgba(107,88,255,0.04) 100%);
+}
+
+/* Modal */
+.modal-backdrop {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(8px); z-index: 100;
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px; animation: fade-in 0.18s ease;
+}
+.modal {
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: 24px; padding: 28px; width: 100%; max-width: 420px;
+  animation: pop-in 0.22s cubic-bezier(.4,1.4,.4,1);
+}
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes pop-in {
+  from { opacity: 0; transform: scale(0.92) translateY(8px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* Toast */
+.toast-stack {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+  display: flex; flex-direction: column; gap: 8px; z-index: 200; pointer-events: none;
+}
+.toast {
+  background: var(--surface-3); border: 1px solid var(--line-strong);
+  color: var(--text); padding: 12px 18px; border-radius: 999px;
+  font-size: 14px; display: flex; align-items: center; gap: 10px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+  animation: slide-up 0.25s cubic-bezier(.4,1.4,.4,1);
+}
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--surface-3); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: var(--line-strong); }
+
+/* Top bar */
+.top-bar {
+  display: flex; align-items: center; justify-content: flex-end;
+  padding: 18px 40px 0; max-width: 1440px; margin: 0 auto; width: 100%; gap: 16px;
+}
+
+/* Footer */
+.app-footer {
+  border-top: 1px solid var(--line);
+  padding: 22px 40px 28px; margin-top: 40px;
+  max-width: 1440px; margin-left: auto; margin-right: auto; width: 100%;
+}
+.footer-row { display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+.footer-links { display: flex; gap: 24px; align-items: center; font-size: 13px; }
+.footer-links a {
+  color: var(--text-3); text-decoration: underline;
+  text-underline-offset: 3px; text-decoration-color: var(--text-4);
+  transition: color 0.15s ease;
+}
+.footer-links a:hover { color: var(--text-2); }
+
+/* Customize button */
+.customize-btn {
+  position: absolute; top: 22px; right: 22px;
+  display: inline-flex; align-items: center; gap: 14px;
+  padding: 14px 16px; border-radius: 20px;
+  background: rgba(255,255,255,0.16); backdrop-filter: blur(24px);
+  border: 1px solid rgba(255,255,255,0.18);
+  color: #fff; font-size: 14px; font-weight: 500; line-height: 1.2;
+  cursor: pointer; text-align: left; z-index: 2;
+  transition: background 0.18s ease, transform 0.12s ease;
+}
+.customize-btn:hover { background: rgba(255,255,255,0.24); }
+.customize-btn:active { transform: scale(0.98); }
+.customize-orb {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #f6d3ff 0%, #b864ff 40%, #5b3a8a 100%);
+  box-shadow: inset 0 -6px 12px rgba(0,0,0,0.25), 0 4px 12px rgba(184,100,255,0.4);
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(255,255,255,0.92);
+}
+
+/* Animations */
+@keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.04); } }
+@keyframes glow {
+  0%,100% { box-shadow: 0 0 0 3px rgba(167,160,255,0.4), 0 0 40px 6px rgba(167,160,255,0.2); }
+  50% { box-shadow: 0 0 0 3px rgba(167,160,255,0.8), 0 0 60px 10px rgba(167,160,255,0.5); }
+}
+@keyframes twinkle { 0%,100% { opacity: 0.2; } 50% { opacity: 1; } }
+
+/* Focus */
+:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; border-radius: 4px; }
+
+/* ===== Mobile ===== */
+.mobile-tabbar { display: none; }
+.mobile-gear { display: none; }
+.mobile-topbar { display: none; }
+.mobile-banner { display: none; }
+.desktop-topbar { display: flex; }
+
+.app[data-platform="mobile"] {
+  max-width: 420px; margin: 0 auto;
+  min-height: 100vh;
+  background: var(--bg);
+}
+.app[data-platform="mobile"] .content { padding: 0 0 100px; }
+.app[data-platform="mobile"] .desktop-topbar { display: none !important; }
+.app[data-platform="mobile"] .mobile-topbar { display: flex !important; }
+.app[data-platform="mobile"] .profile-grid {
+  grid-template-columns: 1fr; gap: 16px; margin-top: 0; padding: 0 16px;
+}
+.app[data-platform="mobile"] .side-rail { display: none; }
+
+/* Hide desktop banner, show mobile banner */
+.app[data-platform="mobile"] .banner { display: none !important; }
+.app[data-platform="mobile"] .mobile-banner { display: flex !important; }
+
+/* Mobile speech bubble */
+.speech-bubble {
+  position: relative;
+  background: var(--surface-2);
+  border-radius: 18px;
+  padding: 8px 14px;
+  font-size: 13px;
+  color: var(--text-2);
+  max-width: 220px;
+}
+.speech-bubble::after {
+  content: "";
+  position: absolute;
+  right: -6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0; height: 0;
+  border: 6px solid transparent;
+  border-left-color: var(--surface-2);
+  border-right: 0;
+}
+
+/* Mobile stat boxes */
+.m-stat-box {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 6px;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  text-align: center;
+}
+.m-stat-value {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: -0.3px;
+}
+.m-stat-label {
+  font-size: 11px;
+  color: var(--text-3);
+  line-height: 1.25;
+}
+.m-stat-icon {
+  width: 28px; height: 28px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--brand);
+}
+
+/* Mobile cards */
+.app[data-platform="mobile"] .games-card,
+.app[data-platform="mobile"] .reviews-card,
+.app[data-platform="mobile"] .coming-soon-card {
+  padding: 20px 18px !important; border-radius: 20px;
+}
+.app[data-platform="mobile"] .games-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 12px !important;
+}
+.app[data-platform="mobile"] .game-title { font-size: 13px !important; }
+.app[data-platform="mobile"] .review-row {
+  grid-template-columns: auto 1fr !important;
+}
+.app[data-platform="mobile"] .review-actions {
+  grid-column: 1 / -1 !important; flex-direction: row !important;
+  align-items: stretch !important; width: 100%;
+  justify-content: flex-start !important; gap: 8px !important;
+}
+.app[data-platform="mobile"] .review-actions .btn { flex: 1; }
+.app[data-platform="mobile"] .coming-soon-art {
+  width: 140px !important; height: 110px !important; right: -20px !important; opacity: 0.5;
+}
+.app[data-platform="mobile"] .coming-soon-card .h-1 { font-size: 20px !important; }
+.app[data-platform="mobile"] .app-footer { padding: 16px; margin-top: 24px; }
+.app[data-platform="mobile"] .footer-row { flex-direction: column; gap: 14px; align-items: flex-start; }
+.app[data-platform="mobile"] .footer-links { flex-wrap: wrap; gap: 10px; }
+.app[data-platform="mobile"] .mobile-tabbar { display: flex !important; }
+.app[data-platform="mobile"] .customize-btn { display: none; }
+.app[data-platform="mobile"] .mobile-gear { display: none; }
+
+/* Mobile tabs */
+.app[data-platform="mobile"] .tabs {
+  width: 100%;
+}
+.app[data-platform="mobile"] .tab {
+  flex: 1; text-align: center;
+}
+
+/* Game cover mobile - taller aspect ratio */
+.app[data-platform="mobile"] .game-tile-cover {
+  aspect-ratio: 3/4 !important;
+}
+
+/* ===== Tweaks panel (simplified) ===== */
+.tweaks-fab {
+  position: fixed; bottom: 20px; right: 20px; z-index: 300;
+  width: 48px; height: 48px; border-radius: 50%;
+  background: rgba(250,249,247,0.9); color: #333;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3); cursor: pointer;
+  border: 1px solid rgba(255,255,255,0.4);
+  transition: transform 0.15s ease;
+}
+.tweaks-fab:hover { transform: scale(1.05); }
+.tweaks-panel {
+  position: fixed; bottom: 80px; right: 20px; z-index: 300;
+  width: 280px; background: rgba(250,249,247,0.92); color: #29261b;
+  backdrop-filter: blur(24px); border: 0.5px solid rgba(255,255,255,0.6);
+  border-radius: 14px; box-shadow: 0 12px 40px rgba(0,0,0,0.18);
+  font-size: 12px; overflow: hidden;
+  animation: pop-in 0.2s ease;
+}
+.tweaks-panel-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 14px; font-weight: 600;
+}
+.tweaks-panel-body { padding: 2px 14px 14px; display: flex; flex-direction: column; gap: 12px; }
+.twk-label { font-size: 10px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: rgba(41,38,27,0.45); }
+.twk-seg {
+  display: flex; padding: 2px; border-radius: 8px; background: rgba(0,0,0,0.06);
+}
+.twk-seg button {
+  flex: 1; border: 0; background: transparent; color: inherit;
+  font: inherit; font-weight: 500; min-height: 26px; border-radius: 6px;
+  cursor: pointer; padding: 4px 6px;
+}
+.twk-seg button[data-active="true"] {
+  background: rgba(255,255,255,0.9); box-shadow: 0 1px 2px rgba(0,0,0,0.12);
+}
+.twk-colors { display: flex; gap: 6px; }
+.twk-color-dot {
+  width: 28px; height: 28px; border-radius: 50%; cursor: pointer;
+  border: 2px solid transparent; transition: border-color 0.15s ease;
+}
+.twk-color-dot[data-active="true"] { border-color: rgba(0,0,0,0.7); }
+.twk-select {
+  width: 100%; height: 28px; padding: 0 8px; border: 0.5px solid rgba(0,0,0,0.1);
+  border-radius: 7px; background: rgba(255,255,255,0.6); font: inherit; color: inherit;
+}
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+<script type="text/babel" data-type="module">
+const { useState, useEffect, useRef, useCallback, useContext, createContext, useMemo } = React;
+
+/* ============================================================
+   Icons (inline SVG)
+   ============================================================ */
+const Icon = ({ size = 20, style, children, viewBox = "0 0 24 24" }) => (
+  <svg width={size} height={size} viewBox={viewBox} fill="none" stroke="currentColor"
+       strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"
+       style={{ flexShrink: 0, ...style }}>
+    {children}
+  </svg>
+);
+
+const Icons = {
+  Home: (p) => <Icon {...p}><path d="M3 11.5L12 4l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1v-8.5z"/></Icon>,
+  Gamepad: (p) => <Icon {...p}><rect x="2" y="7" width="20" height="12" rx="4"/><path d="M7 12h3M8.5 10.5v3M15 12h.01M18 13h.01"/></Icon>,
+  Heart: (p) => <Icon {...p}><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></Icon>,
+  User: (p) => <Icon {...p}><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></Icon>,
+  Bell: (p) => <Icon {...p}><path d="M18 16v-5a6 6 0 0 0-12 0v5l-2 2h16l-2-2zM10 21a2 2 0 0 0 4 0"/></Icon>,
+  Settings: (p) => <Icon {...p}><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3h.1a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8v.1a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></Icon>,
+  Edit: (p) => <Icon {...p}><path d="M12 20h9M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></Icon>,
+  Share: (p) => <Icon {...p}><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></Icon>,
+  Trash: (p) => <Icon {...p}><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6h14z"/></Icon>,
+  Close: (p) => <Icon {...p}><path d="M18 6 6 18M6 6l12 12"/></Icon>,
+  Check: (p) => <Icon {...p}><path d="M5 12.5l4.5 4.5L19 7"/></Icon>,
+  ChevronRight: (p) => <Icon {...p}><path d="m9 6 6 6-6 6"/></Icon>,
+  ChevronDown: (p) => <Icon {...p}><path d="m6 9 6 6 6-6"/></Icon>,
+  ChevronLeft: (p) => <Icon {...p}><path d="m15 6-6 6 6 6"/></Icon>,
+  Plus: (p) => <Icon {...p}><path d="M12 5v14M5 12h14"/></Icon>,
+  Star: (p) => <Icon {...p}><path d="M12 2 15 9l7.5.5-5.5 5 1.7 7.5L12 18l-6.7 4 1.7-7.5L1.5 9.5 9 9z" fill="currentColor"/></Icon>,
+  StarOutline: (p) => <Icon {...p}><path d="M12 2 15 9l7.5.5-5.5 5 1.7 7.5L12 18l-6.7 4 1.7-7.5L1.5 9.5 9 9z"/></Icon>,
+  Chat: (p) => <Icon {...p}><path d="M21 11.5a8.4 8.4 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.8-.9L3 21l1.9-5.7a8.5 8.5 0 0 1-.9-3.8 8.4 8.4 0 0 1 8.5-8.5 8.4 8.4 0 0 1 8.5 8.5z"/></Icon>,
+  Sparkles: (p) => <Icon {...p}><path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M5.6 18.4l2.8-2.8M15.6 8.4l2.8-2.8"/></Icon>,
+  Trophy: (p) => <Icon {...p}><path d="M7 4h10v4a5 5 0 0 1-10 0V4zM5 4H3v2a3 3 0 0 0 3 3M19 4h2v2a3 3 0 0 1-3 3M12 13v4M9 21h6M10 17h4"/></Icon>,
+  Clock: (p) => <Icon {...p}><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></Icon>,
+  Calendar: (p) => <Icon {...p}><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></Icon>,
+  Lock: (p) => <Icon {...p}><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></Icon>,
+  Eye: (p) => <Icon {...p}><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></Icon>,
+  EyeOff: (p) => <Icon {...p}><path d="M17.94 17.94A10.5 10.5 0 0 1 12 19c-6.5 0-10-7-10-7a18.6 18.6 0 0 1 4.06-5M9.9 4.24A9 9 0 0 1 12 4c6.5 0 10 7 10 7a18.6 18.6 0 0 1-2.2 3.1M9.88 9.88a3 3 0 1 0 4.24 4.24M2 2l20 20"/></Icon>,
+  Refresh: (p) => <Icon {...p}><path d="M3 12a9 9 0 0 1 15-6.7L21 8M21 3v5h-5M21 12a9 9 0 0 1-15 6.7L3 16M3 21v-5h5"/></Icon>,
+  Ghost: (p) => <Icon {...p}><path d="M5 21V11a7 7 0 0 1 14 0v10l-2-2-2 2-3-2-3 2-2-2-2 2zM9 11h.01M15 11h.01"/></Icon>,
+  Hidden: (p) => <Icon {...p}><circle cx="12" cy="11" r="3"/><path d="M5 21v-1a7 7 0 0 1 14 0v1M12 2l1 2-1 2-1-2 1-2zM4 12H2M22 12h-2"/></Icon>,
+  Megaphone: (p) => <Icon {...p}><path d="m4 14 3-1V8L4 7zM7 8h2l8-4v14L9 14H7M14 8a4 4 0 0 1 0 6"/></Icon>,
+  Compass: (p) => <Icon {...p}><circle cx="12" cy="12" r="9"/><path d="m16 8-2 6-6 2 2-6 6-2z"/></Icon>,
+};
+
+const FireIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 2c1.5 3 4 4 4 7a4 4 0 1 1-8 0c0-1 0.5-1.5 1-2 0 2 1 3 2 3 0-2-1-3-1-5 0-2 1-2.5 2-3zM7 14a5 5 0 0 0 10 0"/>
+  </svg>
+);
+
+/* ============================================================
+   Mock Data
+   ============================================================ */
+const MOCK = {
+  PROFILE_DATA: {
+    username: "Нагибатор", status: "Люблю играть и собирать ачивки",
+    level: 16, daysOnPlatform: 1400, hoursPlayed: 99,
+    achievements: 32, joinedYear: 2021, friendsCount: 1432,
+  },
+  AVATARS: [
+    { id: "a1", src: "avatars/1.png", label: "Кибер-змея" },
+    { id: "a2", src: "avatars/2.png", label: "Эльфийка" },
+    { id: "a3", src: "avatars/3.png", label: "Кицунэ" },
+    { id: "a4", src: "avatars/4.png", label: "Медуза" },
+    { id: "a5", src: "avatars/5.png", label: "Панк" },
+    { id: "a6", grad: "linear-gradient(135deg, #6B58FF 0%, #B864FF 100%)" },
+    { id: "a7", grad: "linear-gradient(135deg, #FF5AAB 0%, #FF8A5A 100%)" },
+    { id: "a8", grad: "linear-gradient(135deg, #3CCB7F 0%, #67E0B7 100%)" },
+    { id: "a9", grad: "linear-gradient(135deg, #FFB23D 0%, #FFE066 100%)" },
+  ],
+  FRAMES: [
+    { id: "none", label: "Без рамки", style: null },
+    { id: "crystal", label: "Кристалл", src: "frames/1.png" },
+    { id: "thorns", label: "Шипы", src: "frames/2.png" },
+    { id: "ruby", label: "Рубин", src: "frames/3.png" },
+    { id: "neon-purple", label: "Неон", style: "0 0 0 3px #6B58FF, 0 0 24px 4px rgba(107,88,255,.55)" },
+    { id: "neon-pink", label: "Розовый неон", style: "0 0 0 3px #FF5AAB, 0 0 24px 4px rgba(255,90,171,.55)" },
+  ],
+  BACKGROUNDS: [
+    { id: "bg-none", label: "Без фона", grad: "linear-gradient(135deg, #2A2540 0%, #1A1530 100%)" },
+    { id: "bg-serpent", label: "Змей", src: "backgrounds/1.png" },
+    { id: "bg-dragon", label: "Дракон", src: "backgrounds/2.png" },
+    { id: "bg-thorns", label: "Шипы", src: "backgrounds/3.png" },
+    { id: "bg-galaxy", label: "Галактика", grad: "radial-gradient(circle at 30% 20%, #6B58FF 0%, #2A1B58 40%, #100A24 100%)" },
+    { id: "bg-sunset", label: "Закат", grad: "linear-gradient(180deg, #FF5AAB 0%, #FF8A5A 50%, #FFB23D 100%)" },
+    { id: "bg-aurora", label: "Северное сияние", grad: "linear-gradient(160deg, #3CCB7F 0%, #5BC9FF 50%, #6B58FF 100%)" },
+    { id: "bg-ember", label: "Уголья", grad: "radial-gradient(circle at 60% 100%, #FF5A5A 0%, #6B1F1F 50%, #1F0A0A 100%)" },
+  ],
+  EFFECTS: [
+    { id: "fx-none", label: "Без эффекта" },
+    { id: "fx-glow", label: "Свечение" },
+    { id: "fx-pulse", label: "Пульс" },
+    { id: "fx-stars", label: "Звёзды" },
+    { id: "fx-rainbow", label: "Радуга" },
+  ],
+  GAMES: [
+    { id: "g1", title: "Warfare 1942", cat: "Стратегии", hue: 98, hours: 42, cover: "games/warfare.png" },
+    { id: "g2", title: "Merge Mercs", cat: "Стратегии", hue: 282, hours: 28, cover: "games/merge-mercs.png" },
+    { id: "g3", title: "Age of Heroes", cat: "Стратегии", hue: 152, hours: 19, cover: "games/age-of-heroes.png" },
+    { id: "g4", title: "Art of Defense", cat: "Стратегии", hue: 18, hours: 12, cover: "games/art-of-defense.png" },
+    { id: "g5", title: "Косынка онлайн", cat: "Карточные", hue: 48, hours: 8, cover: "games/kosynka.png" },
+    { id: "g6", title: "ДизайнВиль", cat: "Казуальные", hue: 320, hours: 5, cover: "games/designville.png" },
+    { id: "g7", title: "Атлантида", cat: "Приключения", hue: 200, hours: 3, cover: "games/atlantida.png" },
+    { id: "g8", title: "NebulaRun", cat: "Аркады", hue: 252, hours: 3 },
+    { id: "g9", title: "PixelFarm", cat: "Фарм", hue: 108, hours: 2 },
+  ],
+  REVIEWS: [
+    { id: "r1", game: "Warfare 1942", gameHue: 98, gameCover: "games/warfare.png", rating: 4,
+      text: "Новый уровень для браузерных игр. По графике на текущий момент это лучшее, что есть.",
+      date: "3 мая 2026", likes: 1200, dislikes: 800 },
+    { id: "r2", game: "Age of Heroes", gameHue: 152, gameCover: "games/age-of-heroes.png", rating: 5,
+      text: "Игра оставила в целом положительное впечатление. В первую очередь хочется отметить визуальный стиль — он выдержан в единой концепции, а интерфейс выглядит современно и не перегружен деталями. Управление интуитивно понятное, освоиться можно буквально за несколько минут.",
+      date: "15 сентября 2025", likes: 1200, dislikes: 800 },
+    { id: "r3", game: "Art of Defense", gameHue: 18, gameCover: "games/art-of-defense.png", rating: 1,
+      text: "Отвратительно!!!11", date: "8 августа 2024", likes: 1200, dislikes: 800 },
+  ],
+};
+
+/* ============================================================
+   Atoms
+   ============================================================ */
+function Button({ variant = "primary", size = "md", icon, iconRight, children, ...props }) {
+  const cls = ["btn", `btn-${variant}`, size !== "md" && `btn-${size}`].filter(Boolean).join(" ");
+  return <button className={cls} {...props}>{icon}{children}{iconRight}</button>;
+}
+
+function IconButton({ size = "md", variant = "default", title, children, ...props }) {
+  const cls = ["btn-icon", size === "lg" && "lg", variant === "glass" && "btn-glass"].filter(Boolean).join(" ");
+  return <button className={cls} title={title} aria-label={title} {...props}>{children}</button>;
+}
+
+function Avatar({ src, grad, initials, size = 48, ring, frameStyle, frameSrc, style }) {
+  const s = {
+    width: size, height: size, borderRadius: "50%",
+    background: grad || src ? (src ? `url(${src}) center/cover` : grad) : "var(--surface-3)",
+    display: "flex", alignItems: "center", justifyContent: "center",
+    color: "rgba(255,255,255,0.85)", fontWeight: 600, fontSize: size * 0.36,
+    letterSpacing: "0.02em",
+    boxShadow: !frameSrc ? (frameStyle || (ring ? `0 0 0 2px ${ring}` : "none")) : "none",
+    flexShrink: 0, transition: "box-shadow 0.2s ease", ...style,
+  };
+  const frameSize = size * 1.28;
+  const frameOffset = (frameSize - size) / -2;
+  return (
+    <div className="avatar" style={{ position: "relative", width: size, height: size, flexShrink: 0 }}>
+      <div style={s}>{initials && !src && !grad && initials}</div>
+      {frameSrc && (
+        <img src={frameSrc} alt="" style={{
+          position: "absolute", top: frameOffset, left: frameOffset,
+          width: frameSize, height: frameSize,
+          pointerEvents: "none",
+        }} />
+      )}
+    </div>
+  );
+}
+
+function Toggle({ on, onChange }) {
+  return <button className="toggle" data-on={on} role="switch" aria-checked={on} onClick={() => onChange(!on)} />;
+}
+
+function Tabs({ value, onChange, items }) {
+  return (
+    <div className="tabs" role="tablist">
+      {items.map(it => (
+        <button key={it.value} className="tab" data-active={value === it.value}
+          onClick={() => onChange(it.value)} role="tab">
+          {it.label}
+          {it.count != null && <span style={{
+            marginLeft: 6, fontSize: 11, fontWeight: 600,
+            background: value === it.value ? "rgba(255,255,255,0.15)" : "rgba(255,255,255,0.06)",
+            padding: "2px 7px", borderRadius: 99, minWidth: 20, textAlign: "center",
+          }}>{it.count}</span>}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+function Modal({ open, onClose, children, title }) {
+  useEffect(() => {
+    if (!open) return;
+    const esc = (e) => e.key === "Escape" && onClose?.();
+    window.addEventListener("keydown", esc);
+    document.body.style.overflow = "hidden";
+    return () => { window.removeEventListener("keydown", esc); document.body.style.overflow = ""; };
+  }, [open, onClose]);
+  if (!open) return null;
+  return (
+    <div className="modal-backdrop" onClick={onClose}>
+      <div className="modal" onClick={e => e.stopPropagation()} role="dialog" aria-modal="true">
+        {title && <div className="h-2" style={{ marginBottom: 8 }}>{title}</div>}
+        {children}
+      </div>
+    </div>
+  );
+}
+
+const ToastCtx = createContext(() => {});
+function ToastHost({ children }) {
+  const [items, setItems] = useState([]);
+  const push = useCallback((msg, opts = {}) => {
+    const id = Math.random().toString(36).slice(2);
+    setItems(xs => [...xs, { id, msg, kind: opts.kind || "info" }]);
+    setTimeout(() => setItems(xs => xs.filter(x => x.id !== id)), opts.duration || 2400);
+  }, []);
+  return (
+    <ToastCtx.Provider value={push}>
+      {children}
+      <div className="toast-stack">
+        {items.map(t => (
+          <div key={t.id} className="toast">
+            {t.kind === "ok" && <span style={{ color: "var(--ok)" }}><Icons.Check size={16} /></span>}
+            {t.kind === "danger" && <span style={{ color: "var(--danger)" }}><Icons.Close size={16} /></span>}
+            {t.msg}
+          </div>
+        ))}
+      </div>
+    </ToastCtx.Provider>
+  );
+}
+const useToast = () => useContext(ToastCtx);
+
+function GameCover({ hue = 252, label, size = 92, radius = 14, style }) {
+  const bg = `linear-gradient(135deg, hsl(${hue},70%,55%) 0%, hsl(${(hue+40)%360},60%,35%) 60%, hsl(${(hue+80)%360},50%,20%) 100%)`;
+  return (
+    <div style={{ width: size, height: size, borderRadius: radius, background: bg,
+      position: "relative", overflow: "hidden", flexShrink: 0, ...style }}>
+      <div style={{ position: "absolute", inset: 0,
+        background: "repeating-linear-gradient(45deg, transparent 0 14px, rgba(255,255,255,0.05) 14px 28px)" }} />
+      {label && <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "flex-end",
+        padding: 8, fontSize: 11, color: "rgba(255,255,255,0.95)", fontWeight: 600,
+        textShadow: "0 1px 4px rgba(0,0,0,0.5)", lineHeight: 1.15 }}>{label}</div>}
+    </div>
+  );
+}
+
+function StarRating({ value, size = 16, color = "#FFB23D" }) {
+  return (
+    <div className="row" style={{ gap: 2, color }}>
+      {[1,2,3,4,5].map(i => i <= value
+        ? <Icons.Star key={i} size={size} />
+        : <span key={i} style={{ color: "var(--text-4)" }}><Icons.StarOutline size={size} /></span>)}
+    </div>
+  );
+}
+
+function EmptyState({ icon, title, hint, action }) {
+  return (
+    <div className="col" style={{ alignItems: "center", textAlign: "center", padding: "48px 24px", gap: 12 }}>
+      <div style={{ width: 88, height: 88, borderRadius: "50%", background: "var(--surface-2)",
+        display: "flex", alignItems: "center", justifyContent: "center",
+        color: "var(--text-3)", marginBottom: 4 }}>{icon}</div>
+      <div className="h-2" style={{ color: "var(--text)" }}>{title}</div>
+      {hint && <div className="dim" style={{ maxWidth: 340 }}>{hint}</div>}
+      {action && <div style={{ marginTop: 8 }}>{action}</div>}
+    </div>
+  );
+}
+
+/* ============================================================
+   Shell: TopBar, Footer, MobileTabBar
+   ============================================================ */
+function TopBar({ avatar, frame, onAvatarClick, status, isMobile }) {
+  return (
+    <>
+      {/* Desktop top bar */}
+      <div className="top-bar desktop-topbar">
+        <IconButton title="Уведомления"><Icons.Bell size={18} /></IconButton>
+        <button onClick={onAvatarClick} title="Мой профиль"
+          style={{ padding: 2, borderRadius: 999, background: "transparent", border: 0, cursor: "pointer" }}>
+          <Avatar grad={avatar?.grad} src={avatar?.src} initials="Н" size={40}
+            frameStyle={frame?.style} frameSrc={frame?.src} />
+        </button>
+      </div>
+      {/* Mobile top bar — speech bubble + small avatar */}
+      <div className="mobile-topbar" style={{
+        alignItems: "center", justifyContent: "flex-end",
+        gap: 10, padding: "12px 16px 8px",
+      }}>
+        <div className="speech-bubble">{status || "Добавить статус..."}</div>
+        <button onClick={onAvatarClick} title="Мой профиль"
+          style={{ padding: 0, borderRadius: 999, background: "transparent", border: 0, cursor: "pointer" }}>
+          <Avatar grad={avatar?.grad} src={avatar?.src} initials="Н" size={36}
+            frameStyle={frame?.style} frameSrc={frame?.src} />
+        </button>
+      </div>
+    </>
+  );
+}
+
+function Footer() {
+  return (
+    <footer className="app-footer">
+      <div className="footer-row">
+        <div className="small muted" style={{ lineHeight: 1.5 }}>
+          © 2018—2026. Яндекс Игры<br/>Прототип для тестирования идей
+        </div>
+        <div className="footer-links">
+          <a href="#">Пользовательское соглашение</a>
+          <a href="#">Политика конфиденциальности</a>
+          <a href="#">Правила рекомендаций</a>
+        </div>
+        <Button variant="secondary" icon={<Icons.Chat size={16} />}>Техническая поддержка</Button>
+      </div>
+    </footer>
+  );
+}
+
+function MobileTabBar({ current, onNavigate }) {
+  const items = [
+    { id: "about", icon: <Icons.User size={22} />, label: "Профиль" },
+    { id: "games", icon: <Icons.Gamepad size={22} />, label: "Игры" },
+    { id: "settings", icon: <Icons.Settings size={22} />, label: "Меню" },
+  ];
+  return (
+    <div className="mobile-tabbar" style={{
+      position: "fixed", bottom: 0, left: 0, right: 0, maxWidth: 420, margin: "0 auto",
+      justifyContent: "space-around", padding: "10px 8px 14px",
+      background: "rgba(20,20,20,0.95)", backdropFilter: "blur(12px)",
+      borderTop: "1px solid var(--line)", zIndex: 40,
+    }}>
+      {items.map(it => (
+        <button key={it.id} onClick={() => onNavigate(it.id)}
+          style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4,
+            color: current === it.id ? "var(--brand-soft)" : "var(--text-3)", fontSize: 11, padding: "4px 8px" }}>
+          {it.icon}{it.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+/* ============================================================
+   Profile Components
+   ============================================================ */
+function ProfileBanner({ profile, avatar, frame, background, isOwn, onEditAvatar, onEditStatus, onShare, onMobileSettings, isMobile }) {
+  const bgStyle = background?.src
+    ? { background: `url(${background.src}) top center/cover no-repeat` }
+    : background?.grad ? { background: background.grad } : undefined;
+  return (
+    <>
+      {/* Desktop banner */}
+      <div className="banner" style={bgStyle}>
+        <div className="banner-body" style={{ position: "relative", zIndex: 1, display: "flex", gap: 36, alignItems: "center",
+          maxWidth: 1440, margin: "0 auto", width: "100%", padding: "0 40px" }}>
+          {isOwn && (
+            <button onClick={onEditAvatar} className="customize-btn">
+              <span>Настроить<br/>внешний вид</span>
+              <span className="customize-orb"><Icons.Sparkles size={18} /></span>
+            </button>
+          )}
+          <div style={{ position: "relative", flexShrink: 0 }}>
+            <Avatar grad={avatar?.grad} src={avatar?.src} size={220} initials="Н"
+              frameStyle={frame?.style} frameSrc={frame?.src}
+              style={{ border: frame?.src ? "none" : "3px solid rgba(255,255,255,0.16)" }} />
+            {isOwn && (
+              <button onClick={onEditAvatar} title="Изменить аватар" style={{
+                position: "absolute", right: 6, bottom: 6, width: 40, height: 40, borderRadius: "50%",
+                background: "var(--brand)", color: "#fff",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                border: "3px solid rgba(20,10,35,0.9)", cursor: "pointer", transition: "transform 0.15s ease",
+              }}><Icons.Edit size={16} /></button>
+            )}
+          </div>
+          <div className="col banner-identity" style={{ flex: 1, gap: 18, minWidth: 0 }}>
+            <div className="tiny" style={{ color: "rgba(255,255,255,0.72)" }}>ГЕЙМЕР {profile.level} УРОВНЯ</div>
+            <div className="row banner-name-row" style={{ gap: 20, alignItems: "center", flexWrap: "wrap" }}>
+              <div className="h-hero" style={{ color: "#fff" }}>{profile.username}</div>
+              <StatusPill status={profile.status} isOwn={isOwn} onEdit={onEditStatus} />
+              <IconButton variant="glass" title="Поделиться" onClick={onShare}><Icons.Share size={16} /></IconButton>
+            </div>
+            <div className="banner-stats" style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr",
+              gap: 24, marginTop: 12, maxWidth: 760, width: "100%" }}>
+              <BannerStat icon={<Icons.Trophy size={20} />} value={profile.daysOnPlatform.toLocaleString("ru")} label="дней на платформе" />
+              <BannerStat icon={<Icons.Clock size={20} />} value={`${profile.hoursPlayed} часов`} label="суммарное время игры" />
+              <BannerStat icon={<FireIcon />} value={`${profile.achievements} дня`} label="подряд проявляли активность" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile banner — light, compact */}
+      <MobileBanner profile={profile} avatar={avatar} frame={frame} isOwn={isOwn}
+        onEditAvatar={onEditAvatar} onShare={onShare} />
+    </>
+  );
+}
+
+/* Mobile-specific compact banner */
+function MobileBanner({ profile, avatar, frame, isOwn, onEditAvatar, onShare }) {
+  return (
+    <div className="mobile-banner" style={{
+      flexDirection: "column", alignItems: "center",
+      padding: "8px 20px 20px", gap: 14, textAlign: "center",
+    }}>
+      {/* Avatar */}
+      <div style={{ position: "relative" }}>
+        <Avatar grad={avatar?.grad} src={avatar?.src} size={100} initials="Н"
+          frameStyle={frame?.style} frameSrc={frame?.src}
+          style={{ border: frame?.src ? "none" : "3px solid var(--surface-2)" }} />
+        {isOwn && (
+          <button onClick={onEditAvatar} title="Изменить аватар" style={{
+            position: "absolute", right: -2, bottom: -2, width: 32, height: 32, borderRadius: "50%",
+            background: "var(--brand)", color: "#fff",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            border: "2px solid var(--bg)", cursor: "pointer",
+          }}><Icons.Edit size={13} /></button>
+        )}
+      </div>
+
+      {/* Name + share */}
+      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+        <div style={{ fontSize: 26, fontWeight: 700, letterSpacing: "-0.6px", color: "var(--text)" }}>
+          {profile.username}
+        </div>
+        <button onClick={onShare} style={{
+          width: 32, height: 32, borderRadius: "50%",
+          background: "var(--surface-2)", border: "1px solid var(--line)",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          cursor: "pointer", color: "var(--text-2)",
+        }}><Icons.Share size={14} /></button>
+      </div>
+
+      {/* Level */}
+      <div style={{ fontSize: 13, color: "var(--text-3)", marginTop: -6 }}>
+        Геймер {profile.level} уровня
+      </div>
+
+      {/* Stats row */}
+      <div style={{ display: "flex", gap: 8, width: "100%", marginTop: 4 }}>
+        <div className="m-stat-box">
+          <div className="m-stat-icon"><Icons.Trophy size={16} /></div>
+          <div className="m-stat-value">{profile.daysOnPlatform >= 1000
+            ? `${(profile.daysOnPlatform / 1000).toFixed(1).replace(".", ",")}k`
+            : profile.daysOnPlatform}</div>
+          <div className="m-stat-label">дней на<br/>платформе</div>
+        </div>
+        <div className="m-stat-box">
+          <div className="m-stat-icon"><Icons.Clock size={16} /></div>
+          <div className="m-stat-value">{profile.hoursPlayed} часов</div>
+          <div className="m-stat-label">суммарное время<br/>игры</div>
+        </div>
+        <div className="m-stat-box">
+          <div className="m-stat-icon"><FireIcon /></div>
+          <div className="m-stat-value">{profile.achievements}</div>
+          <div className="m-stat-label">дня активности<br/>подряд</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function StatusPill({ status, isOwn, onEdit }) {
+  return (
+    <button onClick={isOwn ? onEdit : undefined} disabled={!isOwn}
+      style={{ display: "inline-flex", alignItems: "center", gap: 10,
+        background: "rgba(255,255,255,0.14)", backdropFilter: "blur(16px)",
+        border: "1px solid rgba(255,255,255,0.14)", padding: "10px 18px", borderRadius: 999,
+        color: "#fff", fontSize: 14, cursor: isOwn ? "pointer" : "default", maxWidth: 320,
+        transition: "background 0.15s ease" }}>
+      <span className="truncate">{status || "Добавить статус..."}</span>
+      {isOwn && <Icons.Edit size={14} />}
+    </button>
+  );
+}
+
+function BannerStat({ icon, value, label }) {
+  return (
+    <div className="row banner-stat" style={{ gap: 14, alignItems: "center" }}>
+      <div className="banner-stat-icon" style={{ width: 48, height: 48, borderRadius: "50%",
+        background: "rgba(255,255,255,0.14)", backdropFilter: "blur(20px)",
+        color: "rgba(255,255,255,0.92)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>{icon}</div>
+      <div className="col" style={{ gap: 2 }}>
+        <div className="banner-stat-value" style={{ fontSize: 20, fontWeight: 600, color: "#fff", letterSpacing: "-0.2px" }}>{value}</div>
+        <div className="banner-stat-label" style={{ fontSize: 13, color: "rgba(255,255,255,0.7)" }}>{label}</div>
+      </div>
+    </div>
+  );
+}
+
+function SideRail({ active, onChange, isOwn }) {
+  const items = isOwn
+    ? [{ id: "about", label: "Обо мне" }, { id: "settings", label: "Настройки" }]
+    : [{ id: "about", label: "Обо мне" }];
+  return (
+    <aside className="col side-rail" style={{ gap: 18, position: "sticky", top: 18, alignSelf: "flex-start" }}>
+      <div className="col" style={{ gap: 2 }}>
+        {items.map(it => (
+          <button key={it.id} className="section-tab" data-active={active === it.id}
+            onClick={() => onChange(it.id)}>{it.label}</button>
+        ))}
+      </div>
+      {isOwn && <HelpCard />}
+    </aside>
+  );
+}
+
+function HelpCard() {
+  return (
+    <div className="card" style={{ position: "relative", overflow: "hidden", padding: 18,
+      background: "linear-gradient(135deg, #2A2540 0%, #1A1530 100%)", border: "1px solid var(--line-strong)" }}>
+      <div style={{ position: "absolute", right: -22, bottom: -28, width: 140, height: 140, borderRadius: "50%",
+        background: "conic-gradient(from 0deg, rgba(255,255,255,0.18), rgba(255,255,255,0.04), rgba(255,255,255,0.18), rgba(255,255,255,0.04))",
+        WebkitMask: "radial-gradient(circle, transparent 30%, #000 32%, #000 60%, transparent 62%)",
+        mask: "radial-gradient(circle, transparent 30%, #000 32%, #000 60%, transparent 62%)",
+        opacity: 0.8, pointerEvents: "none" }} />
+      <div className="col" style={{ gap: 12, position: "relative" }}>
+        <div style={{ fontWeight: 500, fontSize: 15 }}>Нужна помощь?</div>
+        <Button variant="secondary" size="sm" iconRight={<Icons.ChevronRight size={14} />}>В поддержку</Button>
+      </div>
+    </div>
+  );
+}
+
+function GamesCard({ games, onSelect, onShowMore, showAll }) {
+  const visible = showAll ? games : games.slice(0, 7);
+  return (
+    <section className="card games-card" style={{ padding: 28 }}>
+      <div className="row" style={{ gap: 12, marginBottom: 22, alignItems: "baseline" }}>
+        <div className="h-2">Мои игры</div>
+        <div style={{ fontSize: 22, color: "var(--text-3)", fontWeight: 600 }}>{games.length}</div>
+      </div>
+      <div className="games-grid" style={{ display: "grid", gap: 14, gridTemplateColumns: "repeat(4, minmax(0, 1fr))" }}>
+        {visible.map(g => <GameTile key={g.id} game={g} onClick={onSelect} />)}
+        {!showAll && <ShowMoreTile onClick={onShowMore} />}
+      </div>
+    </section>
+  );
+}
+
+function GameTile({ game, onClick }) {
+  const [hover, setHover] = useState(false);
+  return (
+    <button onClick={() => onClick?.(game)}
+      onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
+      style={{ position: "relative", textAlign: "left", background: "transparent",
+        border: "none", padding: 0, cursor: "pointer", display: "flex", flexDirection: "column", gap: 10 }}>
+      <div className="game-tile-cover" style={{ position: "relative", width: "100%", aspectRatio: "1/1" }}>
+        {game.cover ? (
+          <img src={game.cover} alt={game.title} style={{
+            width: "100%", height: "100%", objectFit: "cover", borderRadius: 16,
+            transform: hover ? "scale(1.02)" : "scale(1)",
+            transition: "transform 0.18s ease, box-shadow 0.18s ease",
+            boxShadow: hover ? "0 10px 30px rgba(0,0,0,0.4)" : "none",
+            display: "block",
+          }} />
+        ) : (
+          <GameCover hue={game.hue} size="100%" radius={16} label={game.title}
+            style={{ aspectRatio: "inherit", width: "100%", height: "100%",
+              transform: hover ? "scale(1.02)" : "scale(1)",
+              transition: "transform 0.18s ease, box-shadow 0.18s ease",
+              boxShadow: hover ? "0 10px 30px rgba(0,0,0,0.4)" : "none" }} />
+        )}
+      </div>
+      <div className="col" style={{ gap: 2 }}>
+        <div className="game-title truncate" style={{ fontSize: 14, fontWeight: 500 }}>{game.title}</div>
+        <div className="small">{game.cat}</div>
+      </div>
+    </button>
+  );
+}
+
+function ShowMoreTile({ onClick }) {
+  return (
+    <button onClick={onClick} style={{ background: "transparent", border: "none", cursor: "pointer",
+      display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+      gap: 14, padding: 12, borderRadius: 16, transition: "background 0.15s ease" }}
+      onMouseEnter={e => e.currentTarget.style.background = "var(--bg-2)"}
+      onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
+      <div style={{ width: 56, height: 56, borderRadius: "50%", background: "rgba(107,88,255,0.18)",
+        color: "var(--brand-soft)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <Icons.ChevronDown size={24} />
+      </div>
+      <div className="brand-text" style={{ fontSize: 15, fontWeight: 500, textAlign: "center" }}>Показать<br/>еще</div>
+    </button>
+  );
+}
+
+function ReviewsCard({ reviews, isOwn, onEdit, onDelete }) {
+  if (!reviews.length) {
+    return (
+      <section className="card reviews-card" style={{ padding: 28 }}>
+        <EmptyState icon={<Icons.Chat size={32} />} title="У тебя пока нет отзывов"
+          hint="Твоё мнение очень поможет разработчикам и другим геймерам. Выбирай игру в каталоге!"
+          action={<Button variant="primary" icon={<Icons.Compass size={16} />}>В каталог</Button>} />
+      </section>
+    );
+  }
+  return (
+    <section className="card reviews-card" style={{ padding: 28 }}>
+      <div className="row" style={{ gap: 12, marginBottom: 22, alignItems: "baseline" }}>
+        <div className="h-2">Мои отзывы</div>
+        <div style={{ fontSize: 22, color: "var(--text-3)", fontWeight: 600 }}>{reviews.length}</div>
+      </div>
+      <div className="col" style={{ gap: 14 }}>
+        {reviews.map(r => <ReviewRow key={r.id} review={r} isOwn={isOwn} onEdit={onEdit} onDelete={onDelete} />)}
+      </div>
+    </section>
+  );
+}
+
+function ReviewRow({ review, isOwn, onEdit, onDelete }) {
+  return (
+    <div className="review-row" style={{ background: "var(--surface-2)", borderRadius: 18, padding: 20,
+      display: "grid", gridTemplateColumns: "auto 1fr auto", gap: 16, alignItems: "flex-start" }}>
+      {review.gameCover
+        ? <img src={review.gameCover} alt={review.game} style={{ width: 52, height: 52, borderRadius: 12, objectFit: "cover" }} />
+        : <GameCover hue={review.gameHue} size={52} radius={12} />}
+      <div className="col" style={{ gap: 8, minWidth: 0 }}>
+        <div className="col" style={{ gap: 4 }}>
+          <div style={{ fontSize: 15, fontWeight: 500 }}>{review.game}</div>
+          <StarRating value={review.rating} size={14} />
+        </div>
+        <div className="body" style={{ color: "var(--text-2)" }}>{review.text}</div>
+        <div className="row between" style={{ marginTop: 4 }}>
+          <div className="small muted">{review.date}</div>
+          <div className="row" style={{ gap: 16, color: "var(--text-3)", fontSize: 13 }}>
+            <span className="row" style={{ gap: 6 }}>
+              <Icons.Heart size={14} /> {review.likes >= 1000 ? `${(review.likes/1000).toFixed(1)}k` : review.likes}
+            </span>
+            <span className="row" style={{ gap: 6, opacity: 0.7 }}>
+              <span style={{ transform: "scaleY(-1)", display: "inline-flex" }}><Icons.Heart size={14} /></span> {review.dislikes}
+            </span>
+          </div>
+        </div>
+      </div>
+      {isOwn && (
+        <div className="col review-actions" style={{ gap: 8, alignItems: "flex-end" }}>
+          <Button variant="secondary" size="sm" icon={<Icons.Edit size={14} />}
+            onClick={() => onEdit?.(review)}>Редактировать</Button>
+          <Button variant="ghost" size="sm" icon={<Icons.Trash size={14} />}
+            onClick={() => onDelete?.(review)} title="Удалить" />
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ComingSoonCard({ onSubscribe }) {
+  return (
+    <section className="card coming-soon-card" style={{ position: "relative", overflow: "hidden", padding: "36px 40px",
+      background: "linear-gradient(135deg, #1F1F1F 0%, #1A1A1A 100%)" }}>
+      <div aria-hidden className="coming-soon-art" style={{ position: "absolute", right: -20, top: "50%",
+        transform: "translateY(-50%)", width: 280, height: 220, opacity: 0.85, pointerEvents: "none" }}>
+        <svg viewBox="0 0 280 220" width="100%" height="100%" fill="none">
+          <defs><linearGradient id="megGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="rgba(255,255,255,0.55)" />
+            <stop offset="100%" stopColor="rgba(255,255,255,0.05)" />
+          </linearGradient></defs>
+          <path d="M40 110 L180 30 L180 190 Z" fill="url(#megGrad)" stroke="rgba(255,255,255,0.4)" strokeWidth="1.5" />
+          <ellipse cx="180" cy="110" rx="22" ry="80" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.4)" strokeWidth="1.5" />
+          <rect x="38" y="100" width="14" height="20" rx="4" fill="rgba(255,255,255,0.3)" />
+          <path d="M210 80 Q230 110 210 140" stroke="rgba(255,255,255,0.3)" strokeWidth="2" fill="none" strokeLinecap="round"/>
+          <path d="M225 60 Q255 110 225 160" stroke="rgba(255,255,255,0.18)" strokeWidth="2" fill="none" strokeLinecap="round"/>
+        </svg>
+      </div>
+      <div className="col" style={{ gap: 16, position: "relative", maxWidth: 600 }}>
+        <div className="h-1" style={{ lineHeight: 1.15 }}>
+          Совсем скоро здесь будут<br/>
+          твои <Mark>друзья</Mark> и <Mark>задания</Mark>
+        </div>
+        <div className="dim" style={{ fontSize: 15 }}>Жми кнопку и узнай первым</div>
+        <div><Button variant="primary" onClick={onSubscribe} icon={<span style={{ fontSize: 16 }}>&#128293;</span>}>Супер, хочу!</Button></div>
+      </div>
+    </section>
+  );
+}
+
+function Mark({ children }) {
+  return <span style={{ background: "rgba(107,88,255,0.22)", borderRadius: 8, padding: "0 8px", color: "var(--text)" }}>{children}</span>;
+}
+
+/* ============================================================
+   Avatar Editor
+   ============================================================ */
+const EDITOR_TABS = [
+  { value: "avatar", label: "Аватары" },
+  { value: "frame", label: "Рамка" },
+  { value: "bg", label: "Фон" },
+  { value: "fx", label: "Эффекты" },
+];
+
+function AvatarEditor({ initial, onSave, onCancel, onShowToast }) {
+  const [tab, setTab] = useState("avatar");
+  const [draft, setDraft] = useState(initial);
+  const [confirmCancel, setConfirmCancel] = useState(false);
+  const dirty = JSON.stringify(initial) !== JSON.stringify(draft);
+  const tryCancel = () => { if (dirty) setConfirmCancel(true); else onCancel(); };
+  const currentFrame = MOCK.FRAMES.find(f => f.id === draft.frame) || MOCK.FRAMES[0];
+  const currentBg = MOCK.BACKGROUNDS.find(b => b.id === draft.background) || MOCK.BACKGROUNDS[0];
+  const currentAvatar = MOCK.AVATARS.find(a => a.id === draft.avatar) || MOCK.AVATARS[0];
+
+  return (
+    <div>
+      <div className="row between" style={{ marginBottom: 18 }}>
+        <Tabs value={tab} onChange={setTab} items={EDITOR_TABS} />
+        <div className="row" style={{ gap: 10 }}>
+          <Button variant="ghost" onClick={tryCancel}>{dirty ? "Отменить изменения" : "Назад"}</Button>
+          <Button variant="primary" disabled={!dirty}
+            style={!dirty ? { opacity: 0.5, cursor: "not-allowed" } : null}
+            onClick={() => { onSave(draft); onShowToast?.("Сохранено", "ok"); }}>Сохранить</Button>
+        </div>
+      </div>
+      <div className="card" style={{ padding: 0, overflow: "hidden", borderRadius: 24 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 420px", minHeight: 540 }}>
+          <div style={{ position: "relative",
+            background: currentBg.src ? `url(${currentBg.src}) top center/cover no-repeat` : currentBg.grad,
+            display: "flex", alignItems: "center", justifyContent: "center", padding: 48, overflow: "hidden" }}>
+            {draft.effect === "fx-stars" && <StarsLayer />}
+            {draft.effect === "fx-rainbow" && (
+              <div style={{ position: "absolute", inset: 0,
+                background: "conic-gradient(from 90deg, #FF5AAB, #FFB23D, #3CCB7F, #5BC9FF, #B864FF, #FF5AAB)",
+                opacity: 0.18, mixBlendMode: "screen" }} />
+            )}
+            <Avatar grad={currentAvatar.grad} src={currentAvatar.src} size={300} initials="Н"
+              frameStyle={currentFrame.style || undefined} frameSrc={currentFrame.src}
+              style={{ animation: draft.effect === "fx-pulse" ? "pulse 1.6s ease-in-out infinite"
+                : draft.effect === "fx-glow" ? "glow 2.2s ease-in-out infinite" : "none" }} />
+          </div>
+          <div style={{ background: "var(--surface)", borderLeft: "1px solid var(--line)",
+            padding: "24px 24px 28px", overflow: "auto" }}>
+            <div className="row" style={{ gap: 8, marginBottom: 14, alignItems: "baseline" }}>
+              <div className="h-3">{EDITOR_TABS.find(t => t.value === tab).label}</div>
+              <span style={{ fontSize: 15, color: "var(--text-3)", fontWeight: 600 }}>
+                {tab === "avatar" ? MOCK.AVATARS.length : tab === "frame" ? MOCK.FRAMES.length
+                  : tab === "bg" ? MOCK.BACKGROUNDS.length : MOCK.EFFECTS.length}
+              </span>
+            </div>
+            {tab === "avatar" && (
+              <Grid items={MOCK.AVATARS} selectedId={draft.avatar}
+                onPick={id => setDraft({...draft, avatar: id})}
+                render={a => <Avatar grad={a.grad} src={a.src} size={88} initials="Н" />} />
+            )}
+            {tab === "frame" && (
+              <Grid items={MOCK.FRAMES} selectedId={draft.frame}
+                onPick={id => setDraft({...draft, frame: id})}
+                render={f => f.src
+                  ? <Avatar grad={currentAvatar.grad} src={currentAvatar.src} size={80} initials="Н" frameSrc={f.src} />
+                  : <div style={{ width: 88, height: 88, borderRadius: "50%", background: "var(--surface-3)",
+                      boxShadow: f.style || "inset 0 0 0 1px var(--line)",
+                      display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      {!f.style && <span className="small muted">none</span>}</div>}
+                showLabel />
+            )}
+            {tab === "bg" && (
+              <Grid items={MOCK.BACKGROUNDS} selectedId={draft.background}
+                onPick={id => setDraft({...draft, background: id})}
+                render={b => <div style={{ width: "100%", aspectRatio: "16/9",
+                  background: b.src ? `url(${b.src}) center/cover no-repeat` : b.grad,
+                  borderRadius: 14 }} />}
+                cols={2} aspect="wide" />
+            )}
+            {tab === "fx" && (
+              <Grid items={MOCK.EFFECTS} selectedId={draft.effect}
+                onPick={id => setDraft({...draft, effect: id})}
+                render={() => <div style={{ width: 88, height: 88, borderRadius: 14, background: "var(--surface-2)",
+                  display: "flex", alignItems: "center", justifyContent: "center", color: "var(--brand-soft)" }}>
+                  <Icons.Sparkles size={28} /></div>}
+                showLabel />
+            )}
+          </div>
+        </div>
+      </div>
+      <Modal open={confirmCancel} onClose={() => setConfirmCancel(false)} title="Отменить изменения?">
+        <div className="dim" style={{ marginBottom: 18 }}>Все ваши изменения будут потеряны.</div>
+        <div className="row" style={{ justifyContent: "flex-end", gap: 10 }}>
+          <Button variant="ghost" onClick={() => setConfirmCancel(false)}>Нет, оставить</Button>
+          <Button variant="danger" onClick={() => { setConfirmCancel(false); onCancel(); }}>Да, отменить</Button>
+        </div>
+      </Modal>
+    </div>
+  );
+}
+
+function Grid({ items, selectedId, onPick, render, showLabel, cols = 3, aspect }) {
+  return (
+    <div style={{ display: "grid", gap: 10, gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
+      {items.map(item => {
+        const selected = item.id === selectedId;
+        return (
+          <button key={item.id} onClick={() => onPick(item.id)}
+            style={{ padding: 6, borderRadius: 14, cursor: "pointer",
+              background: selected ? "rgba(107,88,255,0.16)" : "transparent",
+              border: `1.5px solid ${selected ? "var(--brand)" : "transparent"}`,
+              transition: "background 0.15s ease, border-color 0.15s ease",
+              display: "flex", flexDirection: "column", alignItems: "center", gap: 6,
+              minHeight: aspect === "wide" ? 0 : 100,
+              width: aspect === "wide" ? "100%" : undefined }}>
+            <div style={{ position: "relative", display: "flex",
+              width: aspect === "wide" ? "100%" : undefined }}>
+              {render(item)}
+              {selected && <span style={{ position: "absolute", top: -4, right: -4, width: 22, height: 22,
+                borderRadius: 22, background: "var(--brand)", color: "#fff",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                border: "2px solid var(--surface)" }}><Icons.Check size={12} /></span>}
+            </div>
+            {showLabel && <div className="small" style={{ color: selected ? "var(--text)" : "var(--text-3)" }}>{item.label}</div>}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+function StarsLayer() {
+  const stars = useMemo(() => Array.from({ length: 24 }).map(() => ({
+    x: Math.random()*100, y: Math.random()*100, s: 2+Math.random()*3, d: Math.random()*2,
+  })), []);
+  return (
+    <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
+      {stars.map((st, i) => <div key={i} style={{ position: "absolute", left: `${st.x}%`, top: `${st.y}%`,
+        width: st.s, height: st.s, borderRadius: "50%", background: "#fff", opacity: 0.7,
+        animation: `twinkle 2.4s ease-in-out ${st.d}s infinite` }} />)}
+    </div>
+  );
+}
+
+/* ============================================================
+   Settings Page
+   ============================================================ */
+function SettingsRow({ icon, title, hint, action, danger }) {
+  return (
+    <div className="row" style={{ padding: "16px 20px", gap: 16, alignItems: "center", borderBottom: "1px solid var(--line)" }}>
+      {icon && <div style={{ width: 36, height: 36, borderRadius: 10,
+        background: danger ? "rgba(255,90,90,0.14)" : "var(--surface-2)",
+        color: danger ? "var(--danger)" : "var(--text-2)",
+        display: "flex", alignItems: "center", justifyContent: "center" }}>{icon}</div>}
+      <div className="col grow" style={{ gap: 2, minWidth: 0 }}>
+        <div style={{ fontSize: 14, color: danger ? "var(--danger)" : "var(--text)" }}>{title}</div>
+        {hint && <div className="small muted">{hint}</div>}
+      </div>
+      <div style={{ flexShrink: 0 }}>{action}</div>
+    </div>
+  );
+}
+
+function SettingsSection({ title, children }) {
+  return (
+    <div className="col" style={{ gap: 8 }}>
+      <div className="tiny" style={{ paddingLeft: 4 }}>{title}</div>
+      <div className="card" style={{ padding: 0, overflow: "hidden" }}>{children}</div>
+    </div>
+  );
+}
+
+function SettingsPage({ profile, currentAvatar, currentFrame, onAvatarClick, onShowToast }) {
+  const [notif, setNotif] = useState({ news: true, friends: true, achievements: false, marketing: false });
+  const [hidden, setHidden] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [restoreCode, setRestoreCode] = useState("ARENA-99X4-K2N8-PL7M");
+  const [revealed, setRevealed] = useState(false);
+  const regenCode = () => {
+    const r = () => Math.random().toString(36).slice(2,6).toUpperCase();
+    setRestoreCode(`ARENA-${r()}-${r()}-${r()}`);
+    onShowToast?.("Код обновлён", "ok");
+  };
+
+  return (
+    <div className="col" style={{ gap: 24, maxWidth: 720 }}>
+      <div className="h-1">Настройки аккаунта</div>
+      <div className="card" style={{ padding: 20, background: "linear-gradient(135deg, #251E41 0%, #1A1530 100%)" }}>
+        <div className="row" style={{ gap: 18 }}>
+          <Avatar grad={currentAvatar?.grad} src={currentAvatar?.src} size={80} initials="Н"
+            frameStyle={currentFrame?.style} frameSrc={currentFrame?.src} />
+          <div className="col grow" style={{ gap: 4 }}>
+            <div className="h-3">Внешний вид</div>
+            <div className="small dim">Аватар, рамка, фон и эффекты вашего профиля</div>
+          </div>
+          <Button variant="primary" onClick={onAvatarClick} icon={<Icons.Sparkles size={16} />}>Настроить</Button>
+        </div>
+      </div>
+      <SettingsSection title="Данные">
+        <SettingsRow icon={<Icons.User size={16} />} title="Имя пользователя" hint={profile.username}
+          action={<Button variant="ghost" size="sm" icon={<Icons.ChevronRight size={14} />}> </Button>} />
+        <SettingsRow icon={<Icons.Calendar size={16} />} title="Дата регистрации" hint={`${profile.joinedYear} год`}
+          action={<span className="small muted">не редактируется</span>} />
+      </SettingsSection>
+      <SettingsSection title="Код восстановления">
+        <div style={{ padding: 20 }}>
+          <div className="small dim" style={{ marginBottom: 12 }}>
+            Сохраните этот код. Он понадобится, чтобы вернуть доступ к аккаунту, если потеряете пароль.
+          </div>
+          <div className="row" style={{ gap: 10 }}>
+            <input className="input" readOnly value={revealed ? restoreCode : "....................."}
+              style={{ fontFamily: "ui-monospace, monospace", letterSpacing: "0.04em" }} />
+            <IconButton title={revealed ? "Скрыть" : "Показать"} onClick={() => setRevealed(v => !v)}>
+              {revealed ? <Icons.EyeOff size={16} /> : <Icons.Eye size={16} />}
+            </IconButton>
+            <IconButton title="Скопировать" onClick={() => { navigator.clipboard?.writeText(restoreCode); onShowToast?.("Скопировано", "ok"); }}>
+              <Icons.Check size={16} />
+            </IconButton>
+            <Button variant="secondary" size="sm" icon={<Icons.Refresh size={14} />} onClick={regenCode}>Обновить</Button>
+          </div>
+        </div>
+      </SettingsSection>
+      <SettingsSection title="Уведомления">
+        <SettingsRow icon={<Icons.Bell size={16} />} title="Новости платформы" hint="Релизы, обновления, события"
+          action={<Toggle on={notif.news} onChange={v => setNotif({...notif, news: v})} />} />
+        <SettingsRow icon={<Icons.Heart size={16} />} title="Активность друзей" hint="Кто-то начал играть в то же, что и вы"
+          action={<Toggle on={notif.friends} onChange={v => setNotif({...notif, friends: v})} />} />
+        <SettingsRow icon={<Icons.Trophy size={16} />} title="Достижения" hint="Поздравления и напоминания"
+          action={<Toggle on={notif.achievements} onChange={v => setNotif({...notif, achievements: v})} />} />
+        <SettingsRow icon={<Icons.Megaphone size={16} />} title="Маркетинг" hint="Промокоды и скидки"
+          action={<Toggle on={notif.marketing} onChange={v => setNotif({...notif, marketing: v})} />} />
+      </SettingsSection>
+      <SettingsSection title="Приватность">
+        <SettingsRow icon={<Icons.Hidden size={16} />} title="Скрыть профиль" hint="Другие игроки не увидят вашу страницу"
+          action={<Toggle on={hidden} onChange={v => { setHidden(v); onShowToast?.(v ? "Профиль скрыт" : "Профиль открыт", "ok"); }} />} />
+        <SettingsRow icon={<Icons.Lock size={16} />} title="Двухфакторная аутентификация" hint="Не настроена"
+          action={<Button variant="ghost" size="sm">Настроить</Button>} />
+      </SettingsSection>
+      <SettingsSection title="Действия с аккаунтом">
+        <SettingsRow icon={<Icons.Trash size={16} />} danger title="Удалить аккаунт" hint="Это действие нельзя отменить"
+          action={<Button variant="danger" size="sm" onClick={() => setConfirmDelete(true)}>Удалить</Button>} />
+      </SettingsSection>
+      <Modal open={confirmDelete} onClose={() => setConfirmDelete(false)} title="Удалить аккаунт?">
+        <div className="dim" style={{ marginBottom: 18 }}>
+          Все ваши данные, достижения, отзывы и список друзей будут удалены безвозвратно.
+        </div>
+        <div className="row" style={{ justifyContent: "flex-end", gap: 10 }}>
+          <Button variant="ghost" onClick={() => setConfirmDelete(false)}>Отмена</Button>
+          <Button variant="danger" onClick={() => { setConfirmDelete(false); onShowToast?.("Запрос на удаление отправлен", "danger"); }}>Да, удалить</Button>
+        </div>
+      </Modal>
+    </div>
+  );
+}
+
+/* ============================================================
+   Review Editor (modal)
+   ============================================================ */
+function ReviewEditor({ review, onSave, onCancel }) {
+  const [text, setText] = useState(review.text);
+  const [rating, setRating] = useState(review.rating);
+  return (
+    <div className="col" style={{ gap: 16 }}>
+      <div className="row" style={{ gap: 12, alignItems: "center" }}>
+        {review.gameCover
+          ? <img src={review.gameCover} alt={review.game} style={{ width: 48, height: 48, borderRadius: 10, objectFit: "cover" }} />
+          : <GameCover hue={review.gameHue} size={48} radius={10} />}
+        <div>
+          <div style={{ fontSize: 15, fontWeight: 500 }}>{review.game}</div>
+          <div className="row" style={{ gap: 2, color: "#FFB23D" }}>
+            {[1,2,3,4,5].map(i => (
+              <button key={i} onClick={() => setRating(i)} style={{ padding: 2, cursor: "pointer" }}>
+                {i <= rating ? <Icons.Star size={20} />
+                  : <span style={{ color: "var(--text-4)" }}><Icons.StarOutline size={20} /></span>}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+      <textarea className="textarea" value={text} onChange={e => setText(e.target.value)} placeholder="Что вы думаете об игре?" />
+      <div className="row" style={{ justifyContent: "flex-end", gap: 10 }}>
+        <Button variant="ghost" onClick={onCancel}>Отмена</Button>
+        <Button variant="primary" onClick={() => onSave({ ...review, text, rating })}>Сохранить</Button>
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+   Tweaks Panel (simplified, self-contained)
+   ============================================================ */
+function TweaksPanel({ tweaks, setTweak }) {
+  const [open, setOpen] = useState(false);
+  const accents = ["#6B58FF", "#3CCB7F", "#FF5AAB", "#FFB23D", "#5BC9FF"];
+  return (
+    <>
+      <button className="tweaks-fab" onClick={() => setOpen(!open)} title="Tweaks">
+        <Icons.Settings size={20} style={{ color: "#333" }} />
+      </button>
+      {open && (
+        <div className="tweaks-panel">
+          <div className="tweaks-panel-header">
+            <b>Tweaks</b>
+            <button onClick={() => setOpen(false)} style={{ cursor: "pointer", color: "rgba(0,0,0,0.5)", fontSize: 14 }}>x</button>
+          </div>
+          <div className="tweaks-panel-body">
+            <div className="twk-label">Платформа</div>
+            <div className="twk-seg">
+              <button data-active={tweaks.platform === "desktop"} onClick={() => setTweak("platform", "desktop")}>Desktop</button>
+              <button data-active={tweaks.platform === "mobile"} onClick={() => setTweak("platform", "mobile")}>Mobile</button>
+            </div>
+            <div className="twk-label">Состояние профиля</div>
+            <select className="twk-select" value={tweaks.viewerMode} onChange={e => setTweak("viewerMode", e.target.value)}>
+              <option value="own">Свой профиль</option>
+              <option value="other">Чужой профиль</option>
+              <option value="hidden">Скрытый профиль</option>
+              <option value="deleted">Удалённый профиль</option>
+            </select>
+            <div className="twk-label">Плотность</div>
+            <div className="twk-seg">
+              <button data-active={tweaks.density === "regular"} onClick={() => setTweak("density", "regular")}>Обычная</button>
+              <button data-active={tweaks.density === "compact"} onClick={() => setTweak("density", "compact")}>Компакт</button>
+            </div>
+            <div className="twk-label">Цвет акцента</div>
+            <div className="twk-colors">
+              {accents.map(c => (
+                <button key={c} className="twk-color-dot" data-active={tweaks.accent === c}
+                  style={{ background: c }} onClick={() => setTweak("accent", c)} />
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
+/* ============================================================
+   App — Root
+   ============================================================ */
+const DEFAULT_LOOK = { avatar: "a5", frame: "ruby", background: "bg-serpent", effect: "fx-none" };
+
+function App() {
+  const [tweaks, setTweaksState] = useState({ platform: "desktop", viewerMode: "own", density: "regular", accent: "#6B58FF" });
+  const setTweak = (key, val) => setTweaksState(prev => ({ ...prev, [key]: val }));
+
+  const [view, setView] = useState("profile");
+  const [section, setSection] = useState("about");
+  const [mobileTab, setMobileTab] = useState("games");
+  const [look, setLook] = useState(DEFAULT_LOOK);
+  const [reviews, setReviews] = useState(MOCK.REVIEWS);
+  const [editingStatus, setEditingStatus] = useState(false);
+  const [statusDraft, setStatusDraft] = useState(MOCK.PROFILE_DATA.status);
+  const [profile, setProfile] = useState(MOCK.PROFILE_DATA);
+  const [deleteReview, setDeleteReview] = useState(null);
+  const [editReview, setEditReview] = useState(null);
+  const toast = useToast();
+
+  useEffect(() => { document.documentElement.style.setProperty("--brand", tweaks.accent); }, [tweaks.accent]);
+  useEffect(() => { document.documentElement.setAttribute("data-density", tweaks.density); }, [tweaks.density]);
+  useEffect(() => {
+    if (tweaks.viewerMode === "hidden") setView("hidden");
+    else if (tweaks.viewerMode === "deleted") setView("deleted");
+    else setView("profile");
+    if (tweaks.viewerMode !== "own") setSection("about");
+  }, [tweaks.viewerMode]);
+
+  const currentAvatar = MOCK.AVATARS.find(a => a.id === look.avatar);
+  const currentFrame = MOCK.FRAMES.find(f => f.id === look.frame);
+  const currentBg = MOCK.BACKGROUNDS.find(b => b.id === look.background);
+  const isOwn = tweaks.viewerMode === "own";
+  const isMobile = tweaks.platform === "mobile";
+
+  const displayProfile = isOwn ? profile : {
+    ...profile, username: "никита неверович", status: "Заходи поиграть",
+    level: 8, daysOnPlatform: 420, hoursPlayed: 31, achievements: 7,
+  };
+
+  const renderProfileBody = () => {
+    if (section === "settings") {
+      return <SettingsPage profile={profile} currentAvatar={currentAvatar} currentFrame={currentFrame} onAvatarClick={() => setView("editor")}
+        onShowToast={(m, k) => toast(m, { kind: k })} />;
+    }
+    if (isMobile) {
+      return (
+        <div className="col" style={{ gap: 16 }}>
+          <Tabs value={mobileTab} onChange={setMobileTab} items={[
+            { value: "games", label: "Мои игры", count: MOCK.GAMES.length },
+            { value: "reviews", label: "Мои отзывы", count: reviews.length },
+          ]} />
+          {mobileTab === "games" && <GamesCard games={MOCK.GAMES} showAll
+            onSelect={g => toast(`Открыть "${g.title}"`)} onShowMore={() => toast("Полный список игр")} />}
+          {mobileTab === "reviews" && <ReviewsCard reviews={reviews} isOwn={isOwn}
+            onEdit={r => setEditReview(r)} onDelete={r => setDeleteReview(r)} />}
+          {isOwn && <ComingSoonCard onSubscribe={() => toast("Вы первый в очереди!", { kind: "ok" })} />}
+        </div>
+      );
+    }
+    return (
+      <div className="col" style={{ gap: 24 }}>
+        <GamesCard games={MOCK.GAMES}
+          onSelect={g => toast(`Открыть "${g.title}"`)} onShowMore={() => toast("Полный список игр")} />
+        <ReviewsCard reviews={reviews} isOwn={isOwn}
+          onEdit={r => setEditReview(r)} onDelete={r => setDeleteReview(r)} />
+        {isOwn && <ComingSoonCard onSubscribe={() => toast("Вы первый в очереди!", { kind: "ok" })} />}
+      </div>
+    );
+  };
+
+  const renderView = () => {
+    if (view === "editor") {
+      return <AvatarEditor initial={look}
+        onSave={d => { setLook(d); setView("profile"); }}
+        onCancel={() => setView("profile")}
+        onShowToast={(m, k) => toast(m, { kind: k })} />;
+    }
+    if (view === "hidden") {
+      return (
+        <div className="card" style={{ padding: 60 }}>
+          <EmptyState icon={<Icons.Hidden size={36} />} title="Профиль скрыт"
+            hint="Этот игрок ограничил доступ к своему профилю. Возможно, он откроет его позже."
+            action={<Button variant="secondary" icon={<Icons.ChevronLeft size={16} />}>На главную</Button>} />
+        </div>
+      );
+    }
+    if (view === "deleted") {
+      return (
+        <div className="card" style={{ padding: 60 }}>
+          <EmptyState icon={<Icons.Ghost size={36} />} title="Похоже, что профиль удалён или скрыт"
+            hint="Игрок мог удалить аккаунт. Загляни в каталог — там много новых лиц."
+            action={<Button variant="primary" icon={<Icons.Compass size={16} />}>В каталог</Button>} />
+        </div>
+      );
+    }
+    return (
+      <div>
+        <ProfileBanner profile={displayProfile} avatar={currentAvatar} frame={currentFrame}
+          background={currentBg} isOwn={isOwn} isMobile={isMobile}
+          onEditAvatar={() => setView("editor")}
+          onEditStatus={() => { setStatusDraft(displayProfile.status); setEditingStatus(true); }}
+          onShare={() => toast("Ссылка скопирована", { kind: "ok" })}
+          onMobileSettings={() => setSection("settings")} />
+        <div className="profile-grid">
+          <SideRail active={section} onChange={setSection} isOwn={isOwn} />
+          <div className="col" style={{ gap: 24, minWidth: 0 }}>{renderProfileBody()}</div>
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <div className="app" data-platform={tweaks.platform}>
+      <TopBar avatar={currentAvatar} frame={currentFrame} isMobile={isMobile} status={displayProfile.status}
+        onAvatarClick={() => { setView("profile"); setSection("about"); }} />
+      <div className="content">{renderView()}</div>
+      <Footer />
+      {tweaks.platform === "mobile" && (
+        <MobileTabBar current={section} onNavigate={id => {
+          if (id === "about" || id === "settings") { setView("profile"); setSection(id); }
+          else if (id === "games") { setView("profile"); setSection("about"); }
+        }} />
+      )}
+      <TweaksPanel tweaks={tweaks} setTweak={setTweak} />
+
+      {/* Edit status modal */}
+      <Modal open={editingStatus} onClose={() => setEditingStatus(false)} title="Введите статус">
+        <div className="small dim" style={{ marginBottom: 14 }}>Покажите всем, во что вы играете или какое у вас настроение.</div>
+        <input className="input" autoFocus value={statusDraft} onChange={e => setStatusDraft(e.target.value)}
+          maxLength={64} placeholder="Например: Залетай в Crown Royale" />
+        <div className="row between" style={{ marginTop: 16 }}>
+          <div className="small muted">{statusDraft.length} / 64</div>
+          <div className="row" style={{ gap: 10 }}>
+            <Button variant="ghost" onClick={() => setEditingStatus(false)}>Отмена</Button>
+            <Button variant="primary" onClick={() => {
+              setProfile({...profile, status: statusDraft}); setEditingStatus(false);
+              toast("Статус сохранён", { kind: "ok" });
+            }}>Применить</Button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Delete review confirm */}
+      <Modal open={!!deleteReview} onClose={() => setDeleteReview(null)} title="Удалить отзыв?">
+        <div className="dim" style={{ marginBottom: 18 }}>Вы уверены, что хотите удалить отзыв на "{deleteReview?.game}"?</div>
+        <div className="row" style={{ justifyContent: "flex-end", gap: 10 }}>
+          <Button variant="ghost" onClick={() => setDeleteReview(null)}>Нет, оставить</Button>
+          <Button variant="danger" onClick={() => {
+            setReviews(reviews.filter(r => r.id !== deleteReview.id));
+            setDeleteReview(null); toast("Отзыв удалён", { kind: "danger" });
+          }}>Да, удалить</Button>
+        </div>
+      </Modal>
+
+      {/* Edit review modal */}
+      <Modal open={!!editReview} onClose={() => setEditReview(null)} title="Редактирование отзыва">
+        {editReview && <ReviewEditor review={editReview}
+          onSave={updated => { setReviews(reviews.map(r => r.id === updated.id ? updated : r));
+            setEditReview(null); toast("Отзыв обновлён", { kind: "ok" }); }}
+          onCancel={() => setEditReview(null)} />}
+      </Modal>
+    </div>
+  );
+}
+
+/* Mount */
+ReactDOM.createRoot(document.getElementById("root")).render(<ToastHost><App /></ToastHost>);
+</script>
+</body>
+</html>
