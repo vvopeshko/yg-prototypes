@@ -313,6 +313,108 @@ a { color: inherit; text-decoration: none; }
 }
 @keyframes twinkle { 0%,100% { opacity: 0.2; } 50% { opacity: 1; } }
 
+/* Progress bar */
+.progress-bar {
+  height: 6px; border-radius: 99px; background: var(--surface-3); overflow: hidden; width: 100%;
+}
+.progress-bar-fill {
+  height: 100%; border-radius: 99px; background: var(--brand);
+  transition: width 0.4s cubic-bezier(.4,1.4,.4,1);
+}
+.progress-bar-fill[data-done="true"] { background: var(--ok); }
+
+/* Quest row */
+.quest-row {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 16px; border-radius: 14px;
+  background: var(--surface-2); transition: background 0.15s ease;
+}
+.quest-row:hover { background: var(--surface-3); }
+.quest-icon-box {
+  width: 40px; height: 40px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Rarity badges */
+.rarity-common { color: var(--text-3); }
+.rarity-rare { color: #5BC9FF; }
+.rarity-exclusive { color: #FFB23D; }
+
+/* Shop item */
+.shop-item {
+  display: flex; flex-direction: column; gap: 10px;
+  padding: 10px; border-radius: 16px; cursor: pointer;
+  border: 1.5px solid transparent;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.shop-item:hover { background: var(--bg-2); }
+.shop-item[data-owned="true"] { }
+.shop-item-thumb {
+  width: 100%; aspect-ratio: 1/1; border-radius: 12px;
+  object-fit: cover; background: var(--surface-3);
+}
+.shop-item-thumb[data-wide="true"] { aspect-ratio: 16/9; }
+
+/* Points badge */
+.points-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 14px; border-radius: 999px;
+  background: rgba(107,88,255,0.15); color: var(--brand-soft);
+  font-size: 14px; font-weight: 600;
+}
+
+/* Quest cards carousel */
+.quest-cards-row {
+  display: flex; gap: 14px; overflow-x: auto; padding-bottom: 4px;
+  scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.quest-cards-row::-webkit-scrollbar { display: none; }
+.quest-card {
+  flex: 0 0 220px; scroll-snap-align: start;
+  display: flex; flex-direction: column;
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: 20px; overflow: hidden;
+  transition: border-color 0.15s ease;
+}
+.quest-card:hover { border-color: var(--line-strong); }
+.quest-card-hero {
+  position: relative; height: 120px;
+  background: var(--surface-2);
+  display: flex; align-items: center; justify-content: center;
+}
+.quest-card-badge {
+  position: absolute; top: 10px; left: 10px;
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 4px 10px; border-radius: 99px;
+  font-size: 12px; font-weight: 600;
+}
+.quest-card-body {
+  padding: 16px; display: flex; flex-direction: column; gap: 10px; flex: 1;
+}
+.quest-card-body .quest-card-title {
+  font-size: 15px; font-weight: 600; line-height: 1.25;
+}
+.quest-card-body .quest-card-desc {
+  font-size: 13px; color: var(--text-3); line-height: 1.35;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.quest-card-footer {
+  padding: 0 16px 16px; margin-top: auto;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.carousel-nav {
+  display: flex; align-items: center; gap: 8px;
+}
+.carousel-nav-btn {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--surface-2); border: 1px solid var(--line);
+  color: var(--text-2); display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: background 0.15s ease;
+}
+.carousel-nav-btn:hover { background: var(--surface-3); }
+
 /* Focus */
 :focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; border-radius: 4px; }
 
@@ -535,6 +637,7 @@ const Icons = {
   Hidden: (p) => <Icon {...p}><circle cx="12" cy="11" r="3"/><path d="M5 21v-1a7 7 0 0 1 14 0v1M12 2l1 2-1 2-1-2 1-2zM4 12H2M22 12h-2"/></Icon>,
   Megaphone: (p) => <Icon {...p}><path d="m4 14 3-1V8L4 7zM7 8h2l8-4v14L9 14H7M14 8a4 4 0 0 1 0 6"/></Icon>,
   Compass: (p) => <Icon {...p}><circle cx="12" cy="12" r="9"/><path d="m16 8-2 6-6 2 2-6 6-2z"/></Icon>,
+  Coin: (p) => <Icon {...p}><path d="M12 2 L20 12 L12 22 L4 12 Z" fill="currentColor" stroke="none"/><path d="M12 6 L16.5 12 L12 18 L7.5 12 Z" fill="none" stroke="rgba(0,0,0,0.25)" strokeWidth="1"/></Icon>,
 };
 
 const FireIcon = () => (
@@ -599,6 +702,30 @@ const MOCK = {
     { id: "g7", title: "Атлантида", cat: "Приключения", hue: 200, hours: 3, cover: "games/atlantida.png" },
     { id: "g8", title: "NebulaRun", cat: "Аркады", hue: 252, hours: 3 },
     { id: "g9", title: "PixelFarm", cat: "Фарм", hue: 108, hours: 2 },
+  ],
+  QUESTS: [
+    { id: "q1", type: "onboarding", title: "Задай никнейм", icon: "User", reward: 20, progress: 1, goal: 1, status: "claimed" },
+    { id: "q2", type: "onboarding", title: "Выбери аватар", icon: "Sparkles", reward: 20, progress: 1, goal: 1, status: "claimed" },
+    { id: "q3", type: "onboarding", title: "Напиши статус", icon: "Edit", reward: 15, progress: 1, goal: 1, status: "completed" },
+    { id: "q4", type: "onboarding", title: "Поиграй в первую игру", icon: "Gamepad", reward: 25, progress: 1, goal: 1, status: "claimed" },
+    { id: "q5", type: "onboarding", title: "Оставь первый отзыв", icon: "Chat", reward: 30, progress: 0, goal: 1, status: "active" },
+    { id: "q6", type: "milestone", title: "Поиграй в 5 разных игр", icon: "Gamepad", reward: 50, progress: 3, goal: 5, status: "active" },
+    { id: "q7", type: "milestone", title: "Наиграй 10 часов", icon: "Clock", reward: 80, progress: 8, goal: 10, status: "active" },
+    { id: "q8", type: "milestone", title: "Играй 7 дней подряд", icon: "Trophy", reward: 60, progress: 7, goal: 7, status: "completed" },
+    { id: "q9", type: "milestone", title: "Оставь 5 отзывов", icon: "Star", reward: 100, progress: 2, goal: 5, status: "active" },
+    { id: "q10", type: "milestone", title: "Попробуй 3 категории", icon: "Compass", reward: 40, progress: 3, goal: 3, status: "claimed" },
+  ],
+  SHOP: [
+    { id: "s1", group: "avatars", name: "Кибер-змея", price: 120, rarity: "rare", thumb: "avatars/1.png", owned: false },
+    { id: "s2", group: "avatars", name: "Эльфийка", price: 80, rarity: "common", thumb: "avatars/2.png", owned: true },
+    { id: "s3", group: "avatars", name: "Кицунэ", price: 150, rarity: "rare", thumb: "avatars/3.png", owned: false },
+    { id: "s4", group: "avatars", name: "Медуза", price: 200, rarity: "exclusive", thumb: "avatars/4.png", owned: false },
+    { id: "s5", group: "frames", name: "Кристалл", price: 100, rarity: "common", thumb: "frames/1.png", owned: false },
+    { id: "s6", group: "frames", name: "Шипы", price: 180, rarity: "rare", thumb: "frames/2.png", owned: false },
+    { id: "s7", group: "frames", name: "Рубин", price: 250, rarity: "exclusive", thumb: "frames/3.png", owned: true },
+    { id: "s8", group: "backgrounds", name: "Змей", price: 150, rarity: "rare", thumb: "backgrounds/1.png", owned: true },
+    { id: "s9", group: "backgrounds", name: "Дракон", price: 120, rarity: "common", thumb: "backgrounds/2.png", owned: false },
+    { id: "s10", group: "backgrounds", name: "Шипы", price: 200, rarity: "exclusive", thumb: "backgrounds/3.png", owned: false },
   ],
   REVIEWS: [
     { id: "r1", game: "Warfare 1942", gameHue: 98, gameCover: "games/warfare.png", rating: 4,
@@ -977,7 +1104,7 @@ function BannerStat({ icon, value, label }) {
 
 function SideRail({ active, onChange, isOwn }) {
   const items = isOwn
-    ? [{ id: "about", label: "Обо мне" }, { id: "settings", label: "Настройки" }]
+    ? [{ id: "about", label: "Обо мне" }, { id: "quests", label: "Задания" }, { id: "shop", label: "Магазин" }, { id: "settings", label: "Настройки" }]
     : [{ id: "about", label: "Обо мне" }];
   return (
     <aside className="col side-rail" style={{ gap: 18, position: "sticky", top: 18, alignSelf: "flex-start" }}>
@@ -1130,6 +1257,271 @@ function ReviewRow({ review, isOwn, onEdit, onDelete }) {
         </div>
       )}
     </div>
+  );
+}
+
+/* ============================================================
+   Quests & Shop
+   ============================================================ */
+
+/* Quest cards for main page (horizontal carousel) */
+function QuestCardsRow({ quests, points, onClaim, onNavigate }) {
+  const scrollRef = useRef(null);
+  const scroll = (dir) => {
+    if (scrollRef.current) scrollRef.current.scrollBy({ left: dir * 240, behavior: "smooth" });
+  };
+  const visible = quests.filter(q => q.status !== "claimed");
+  const claimable = quests.filter(q => q.status === "completed");
+
+  const DESCS = {
+    q1: "Придумай уникальное имя, чтобы другие игроки могли тебя найти",
+    q2: "Выбери аватар, который будет представлять тебя на платформе",
+    q3: "Расскажи миру, во что играешь или какое у тебя настроение",
+    q4: "Запусти любую игру из каталога и проведи в ней хотя бы минуту",
+    q5: "Поделись мнением об игре — это помогает другим игрокам",
+    q6: "Попробуй разные игры — открой для себя новые жанры",
+    q7: "Проводи время за любимыми играми — каждый час на счету",
+    q8: "Заходи на платформу каждый день и не прерывай серию",
+    q9: "Пиши отзывы — твоё мнение важно для сообщества",
+    q10: "Играй в игры разных категорий и расширяй кругозор",
+  };
+
+  return (
+    <section>
+      <div className="row between" style={{ marginBottom: 16 }}>
+        <div className="row" style={{ gap: 12, alignItems: "baseline" }}>
+          <div className="h-2">Задания</div>
+          <div style={{ fontSize: 22, color: "var(--text-3)", fontWeight: 600 }}>
+            {visible.length}
+          </div>
+          <button onClick={onNavigate} style={{ color: "var(--text-3)", cursor: "pointer",
+            display: "flex", alignItems: "center" }}>
+            <Icons.ChevronRight size={20} />
+          </button>
+        </div>
+        <div className="row" style={{ gap: 8 }}>
+          <div className="points-badge"><Icons.Coin size={14} />{points} pts</div>
+          <div className="carousel-nav">
+            <button className="carousel-nav-btn" onClick={() => scroll(-1)}><Icons.ChevronLeft size={16} /></button>
+            <button className="carousel-nav-btn" onClick={() => scroll(1)}><Icons.ChevronRight size={16} /></button>
+          </div>
+        </div>
+      </div>
+      <div className="quest-cards-row" ref={scrollRef}>
+        {visible.map(q => {
+          const pct = Math.min(100, (q.progress / q.goal) * 100);
+          const isClaimable = q.status === "completed";
+          const IconComp = Icons[q.icon] || Icons.Star;
+          return (
+            <div key={q.id} className="quest-card">
+              <div className="quest-card-hero">
+                {isClaimable ? (
+                  <div style={{ width: 56, height: 56, borderRadius: "50%",
+                    background: "rgba(60,203,127,0.15)", color: "var(--ok)",
+                    display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <Icons.Check size={28} />
+                  </div>
+                ) : (
+                  <div style={{ width: 56, height: 56, borderRadius: 16,
+                    background: "rgba(107,88,255,0.12)", color: "var(--brand-soft)",
+                    display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <IconComp size={28} />
+                  </div>
+                )}
+                <div className="quest-card-badge" style={{
+                  background: isClaimable ? "rgba(60,203,127,0.2)" : "rgba(107,88,255,0.15)",
+                  color: isClaimable ? "var(--ok)" : "var(--brand-soft)",
+                }}>
+                  {isClaimable ? <><Icons.Check size={12} /> Done</> : <>+{q.reward} <Icons.Coin size={11} /></>}
+                </div>
+              </div>
+              <div className="quest-card-body">
+                <div className="quest-card-title">{q.title}</div>
+                <div className="quest-card-desc">{DESCS[q.id] || "Выполни задание и получи награду"}</div>
+              </div>
+              <div className="quest-card-footer">
+                {q.goal > 1 && (
+                  <div>
+                    <div className="row between" style={{ marginBottom: 6 }}>
+                      <span className="small muted">Прогресс</span>
+                      <span className="small" style={{ color: "var(--text-2)" }}>{q.progress} / {q.goal}</span>
+                    </div>
+                    <div className="progress-bar">
+                      <div className="progress-bar-fill" data-done={pct >= 100} style={{ width: `${pct}%` }} />
+                    </div>
+                  </div>
+                )}
+                {isClaimable ? (
+                  <Button variant="primary" size="sm" onClick={() => onClaim?.(q)}
+                    style={{ width: "100%", justifyContent: "center" }}>Забрать награду</Button>
+                ) : (
+                  <Button variant="secondary" size="sm"
+                    style={{ width: "100%", justifyContent: "center" }}>Подробнее</Button>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
+function QuestsSection({ quests, points, onClaim, onShowToast }) {
+  const claimable = quests.filter(q => q.status === "completed");
+  const active = quests.filter(q => q.status === "active");
+  const claimed = quests.filter(q => q.status === "claimed");
+  return (
+    <section className="card" style={{ padding: 28 }}>
+      <div className="row between" style={{ marginBottom: 22 }}>
+        <div className="row" style={{ gap: 12, alignItems: "baseline" }}>
+          <div className="h-2">Задания</div>
+          <div style={{ fontSize: 22, color: "var(--text-3)", fontWeight: 600 }}>
+            {quests.filter(q => q.status !== "claimed").length}
+          </div>
+        </div>
+        <div className="points-badge">
+          <Icons.Coin size={14} />
+          {points} pts
+        </div>
+      </div>
+      <div className="col" style={{ gap: 8 }}>
+        {/* Claimable first */}
+        {claimable.map(q => <QuestRow key={q.id} quest={q} onClaim={onClaim} />)}
+        {/* Active */}
+        {active.map(q => <QuestRow key={q.id} quest={q} />)}
+        {/* Completed/claimed - collapsed */}
+        {claimed.length > 0 && (
+          <div className="small muted" style={{ padding: "8px 0 4px" }}>
+            Выполнено: {claimed.length}
+          </div>
+        )}
+        {claimed.map(q => <QuestRow key={q.id} quest={q} />)}
+      </div>
+    </section>
+  );
+}
+
+function QuestRow({ quest, onClaim }) {
+  const done = quest.status === "claimed";
+  const claimable = quest.status === "completed";
+  const pct = Math.min(100, (quest.progress / quest.goal) * 100);
+  const IconComp = Icons[quest.icon] || Icons.Star;
+  return (
+    <div className="quest-row" style={done ? { opacity: 0.5 } : undefined}>
+      <div className="quest-icon-box" style={{
+        background: done ? "var(--surface-3)" : claimable ? "rgba(60,203,127,0.15)" : "rgba(107,88,255,0.12)",
+        color: done ? "var(--text-4)" : claimable ? "var(--ok)" : "var(--brand-soft)",
+      }}>
+        {done ? <Icons.Check size={18} /> : <IconComp size={18} />}
+      </div>
+      <div className="col grow" style={{ gap: 6, minWidth: 0 }}>
+        <div className="row between">
+          <div style={{ fontSize: 14, fontWeight: 500,
+            textDecoration: done ? "line-through" : "none",
+            color: done ? "var(--text-3)" : "var(--text)" }}>{quest.title}</div>
+          <div style={{ fontSize: 13, fontWeight: 600, flexShrink: 0,
+            color: claimable ? "var(--ok)" : done ? "var(--text-4)" : "var(--brand-soft)" }}>
+            +{quest.reward} pts
+          </div>
+        </div>
+        {!done && quest.goal > 1 && (
+          <div className="row" style={{ gap: 8 }}>
+            <div className="progress-bar" style={{ flex: 1 }}>
+              <div className="progress-bar-fill" data-done={pct >= 100}
+                style={{ width: `${pct}%` }} />
+            </div>
+            <div className="small muted" style={{ fontSize: 12, flexShrink: 0 }}>
+              {quest.progress}/{quest.goal}
+            </div>
+          </div>
+        )}
+      </div>
+      {claimable && (
+        <Button variant="primary" size="sm" onClick={() => onClaim?.(quest)}>
+          Забрать
+        </Button>
+      )}
+    </div>
+  );
+}
+
+function ShopSection({ items, points, onBuy }) {
+  const [shopTab, setShopTab] = useState("avatars");
+  const groups = [
+    { value: "avatars", label: "Аватары" },
+    { value: "frames", label: "Рамки" },
+    { value: "backgrounds", label: "Бэкграунды" },
+  ];
+  const filtered = items.filter(i => i.group === shopTab);
+  const RARITY_LABELS = { common: "Обычная", rare: "Редкая", exclusive: "Эксклюзив" };
+  return (
+    <section className="card" style={{ padding: 28 }}>
+      <div className="row between" style={{ marginBottom: 22 }}>
+        <div className="h-2">Магазин</div>
+        <div className="points-badge">
+          <Icons.Coin size={14} />
+          {points} pts
+        </div>
+      </div>
+      <Tabs value={shopTab} onChange={setShopTab} items={groups} />
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 10, marginTop: 18 }}>
+        {filtered.map(item => (
+          <div key={item.id} className="shop-item" data-owned={item.owned}>
+            <div style={{ position: "relative" }}>
+              <img className="shop-item-thumb" src={item.thumb} alt={item.name}
+                data-wide={item.group === "backgrounds"} />
+              {item.rarity !== "common" && (
+                <span style={{
+                  position: "absolute", top: 8, left: 8,
+                  padding: "3px 10px", borderRadius: 99,
+                  fontSize: 11, fontWeight: 700, letterSpacing: "0.02em",
+                  background: item.rarity === "exclusive" ? "rgba(255,178,61,0.2)" : "rgba(91,201,255,0.2)",
+                  color: item.rarity === "exclusive" ? "#FFB23D" : "#5BC9FF",
+                  border: `1px solid ${item.rarity === "exclusive" ? "rgba(255,178,61,0.3)" : "rgba(91,201,255,0.3)"}`,
+                }}>{RARITY_LABELS[item.rarity]}</span>
+              )}
+              {item.owned && (
+                <span style={{
+                  position: "absolute", top: 8, right: 8,
+                  width: 24, height: 24, borderRadius: 99,
+                  background: "rgba(60,203,127,0.2)", color: "var(--ok)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                }}><Icons.Check size={14} /></span>
+              )}
+            </div>
+            <div className="col" style={{ gap: 4, padding: "0 4px" }}>
+              <div style={{ fontSize: 13, fontWeight: 500 }}>{item.name}</div>
+              {item.owned ? (
+                <div style={{
+                  display: "flex", alignItems: "center", justifyContent: "center", gap: 6,
+                  height: 32, borderRadius: 999, padding: "0 14px",
+                  background: "rgba(60,203,127,0.1)", color: "var(--ok)", fontSize: 13, fontWeight: 500,
+                }}>
+                  <Icons.Check size={13} />
+                  В коллекции
+                </div>
+              ) : points >= item.price ? (
+                <Button variant="primary" size="sm"
+                  icon={<Icons.Coin size={12} />}
+                  onClick={() => onBuy?.(item)}>
+                  {item.price} pts
+                </Button>
+              ) : (
+                <div style={{
+                  display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+                  height: 32, borderRadius: 999, padding: "0 14px",
+                  background: "var(--surface-3)", color: "var(--text-4)", fontSize: 13, fontWeight: 500,
+                }}>
+                  <Icons.Lock size={13} />
+                  {item.price} pts
+                </div>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
   );
 }
 
@@ -1524,6 +1916,9 @@ function App() {
   const [profile, setProfile] = useState(MOCK.PROFILE_DATA);
   const [deleteReview, setDeleteReview] = useState(null);
   const [editReview, setEditReview] = useState(null);
+  const [quests, setQuests] = useState(MOCK.QUESTS);
+  const [shopItems, setShopItems] = useState(MOCK.SHOP);
+  const [points, setPoints] = useState(125);
   const toast = useToast();
 
   useEffect(() => { document.documentElement.style.setProperty("--brand", tweaks.accent); }, [tweaks.accent]);
@@ -1547,9 +1942,35 @@ function App() {
   };
 
   const renderProfileBody = () => {
+    const handleClaim = (quest) => {
+      setQuests(quests.map(q => q.id === quest.id ? { ...q, status: "claimed" } : q));
+      setPoints(p => p + quest.reward);
+      toast(`+${quest.reward} pts!`, { kind: "ok" });
+    };
+    const handleBuy = (item) => {
+      if (points < item.price) return;
+      setPoints(p => p - item.price);
+      setShopItems(shopItems.map(i => i.id === item.id ? { ...i, owned: true } : i));
+      toast(`${item.name} — теперь в коллекции!`, { kind: "ok" });
+    };
+
     if (section === "settings") {
       return <SettingsPage profile={profile} currentAvatar={currentAvatar} currentFrame={currentFrame} onAvatarClick={() => setView("editor")}
         onShowToast={(m, k) => toast(m, { kind: k })} />;
+    }
+    if (section === "quests") {
+      return (
+        <div className="col" style={{ gap: 24 }}>
+          <QuestsSection quests={quests} points={points} onClaim={handleClaim} />
+        </div>
+      );
+    }
+    if (section === "shop") {
+      return (
+        <div className="col" style={{ gap: 24 }}>
+          <ShopSection items={shopItems} points={points} onBuy={handleBuy} />
+        </div>
+      );
     }
     if (isMobile) {
       return (
@@ -1557,22 +1978,30 @@ function App() {
           <Tabs value={mobileTab} onChange={setMobileTab} items={[
             { value: "games", label: "Мои игры", count: MOCK.GAMES.length },
             { value: "reviews", label: "Мои отзывы", count: reviews.length },
+            { value: "quests", label: "Задания" },
           ]} />
           {mobileTab === "games" && <GamesCard games={MOCK.GAMES} showAll
             onSelect={g => toast(`Открыть "${g.title}"`)} onShowMore={() => toast("Полный список игр")} />}
           {mobileTab === "reviews" && <ReviewsCard reviews={reviews} isOwn={isOwn}
             onEdit={r => setEditReview(r)} onDelete={r => setDeleteReview(r)} />}
-          {isOwn && <ComingSoonCard onSubscribe={() => toast("Вы первый в очереди!", { kind: "ok" })} />}
+          {mobileTab === "quests" && isOwn && (
+            <div className="col" style={{ gap: 16 }}>
+              <QuestsSection quests={quests} points={points} onClaim={handleClaim} />
+              <ShopSection items={shopItems} points={points} onBuy={handleBuy} />
+            </div>
+          )}
+          {mobileTab !== "quests" && isOwn && <ComingSoonCard onSubscribe={() => toast("Вы первый в очереди!", { kind: "ok" })} />}
         </div>
       );
     }
     return (
       <div className="col" style={{ gap: 24 }}>
+        {isOwn && <QuestCardsRow quests={quests} points={points} onClaim={handleClaim}
+          onNavigate={() => setSection("quests")} />}
         <GamesCard games={MOCK.GAMES}
           onSelect={g => toast(`Открыть "${g.title}"`)} onShowMore={() => toast("Полный список игр")} />
         <ReviewsCard reviews={reviews} isOwn={isOwn}
           onEdit={r => setEditReview(r)} onDelete={r => setDeleteReview(r)} />
-        {isOwn && <ComingSoonCard onSubscribe={() => toast("Вы первый в очереди!", { kind: "ok" })} />}
       </div>
     );
   };
