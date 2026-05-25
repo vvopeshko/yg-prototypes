@@ -704,28 +704,29 @@ const MOCK = {
     { id: "g9", title: "PixelFarm", cat: "Фарм", hue: 108, hours: 2 },
   ],
   QUESTS: [
-    { id: "q1", type: "onboarding", title: "Задай никнейм", icon: "User", reward: 20, progress: 1, goal: 1, status: "claimed" },
-    { id: "q2", type: "onboarding", title: "Выбери аватар", icon: "Sparkles", reward: 20, progress: 1, goal: 1, status: "claimed" },
-    { id: "q3", type: "onboarding", title: "Напиши статус", icon: "Edit", reward: 15, progress: 1, goal: 1, status: "completed" },
-    { id: "q4", type: "onboarding", title: "Поиграй в первую игру", icon: "Gamepad", reward: 25, progress: 1, goal: 1, status: "claimed" },
-    { id: "q5", type: "onboarding", title: "Оставь первый отзыв", icon: "Chat", reward: 30, progress: 0, goal: 1, status: "active" },
-    { id: "q6", type: "milestone", title: "Поиграй в 5 разных игр", icon: "Gamepad", reward: 50, progress: 3, goal: 5, status: "active" },
-    { id: "q7", type: "milestone", title: "Наиграй 10 часов", icon: "Clock", reward: 80, progress: 8, goal: 10, status: "active" },
-    { id: "q8", type: "milestone", title: "Играй 7 дней подряд", icon: "Trophy", reward: 60, progress: 7, goal: 7, status: "completed" },
-    { id: "q9", type: "milestone", title: "Оставь 5 отзывов", icon: "Star", reward: 100, progress: 2, goal: 5, status: "active" },
-    { id: "q10", type: "milestone", title: "Попробуй 3 категории", icon: "Compass", reward: 40, progress: 3, goal: 3, status: "claimed" },
+    // Блок 0: Воронка первого опыта (выполнен)
+    { id: "q1", block: 0, title: "Зайди в профиль", icon: "Home", reward: 50, progress: 1, goal: 1, status: "claimed" },
+    { id: "q2", block: 0, title: "Купи первый предмет", icon: "Star", reward: 30, progress: 1, goal: 1, status: "claimed" },
+    { id: "q3", block: 0, title: "Примени косметику", icon: "Sparkles", reward: 30, progress: 1, goal: 1, status: "claimed" },
+    // Блок 1: Лёгкие действия (активный)
+    { id: "q4", block: 1, title: "Задай никнейм", icon: "User", reward: 25, progress: 0, goal: 1, status: "active", trigger: "nickname" },
+    { id: "q5", block: 1, title: "Напиши статус", icon: "Edit", reward: 20, progress: 0, goal: 1, status: "active", trigger: "status" },
+    { id: "q6", block: 1, title: "Купи второй предмет", icon: "Star", reward: 25, progress: 1, goal: 2, status: "active", trigger: "buy" },
+    { id: "q7", block: 1, title: "Примени второй предмет", icon: "Sparkles", reward: 20, progress: 1, goal: 2, status: "active", trigger: "equip" },
+    { id: "q8", block: 1, title: "Поделись профилем", icon: "Share", reward: 25, progress: 0, goal: 1, status: "active", trigger: "share" },
+    { id: "q9", block: 1, title: "Посмотри рекламу", icon: "Megaphone", reward: 25, progress: 0, goal: 1, status: "active", trigger: "ad" },
   ],
   SHOP: [
-    { id: "s1", group: "avatars", name: "Кибер-змея", price: 120, rarity: "rare", thumb: "avatars/1.png", owned: false },
-    { id: "s2", group: "avatars", name: "Эльфийка", price: 80, rarity: "common", thumb: "avatars/2.png", owned: true },
-    { id: "s3", group: "avatars", name: "Кицунэ", price: 150, rarity: "rare", thumb: "avatars/3.png", owned: false },
-    { id: "s4", group: "avatars", name: "Медуза", price: 200, rarity: "exclusive", thumb: "avatars/4.png", owned: false },
-    { id: "s5", group: "frames", name: "Кристалл", price: 100, rarity: "common", thumb: "frames/1.png", owned: false },
-    { id: "s6", group: "frames", name: "Шипы", price: 180, rarity: "rare", thumb: "frames/2.png", owned: false },
-    { id: "s7", group: "frames", name: "Рубин", price: 250, rarity: "exclusive", thumb: "frames/3.png", owned: true },
-    { id: "s8", group: "backgrounds", name: "Змей", price: 150, rarity: "rare", thumb: "backgrounds/1.png", owned: true },
-    { id: "s9", group: "backgrounds", name: "Дракон", price: 120, rarity: "common", thumb: "backgrounds/2.png", owned: false },
-    { id: "s10", group: "backgrounds", name: "Шипы", price: 200, rarity: "exclusive", thumb: "backgrounds/3.png", owned: false },
+    { id: "s0", group: "frames", name: "Новичок", price: 50, rarity: "common", thumb: "frames/1.png", owned: true },
+    { id: "s1", group: "avatars", name: "Кибер-змея", price: 60, rarity: "common", thumb: "avatars/1.png", owned: false },
+    { id: "s2", group: "avatars", name: "Эльфийка", price: 60, rarity: "common", thumb: "avatars/2.png", owned: false },
+    { id: "s3", group: "avatars", name: "Кицунэ", price: 200, rarity: "rare", thumb: "avatars/3.png", owned: false },
+    { id: "s4", group: "avatars", name: "Медуза", price: 500, rarity: "epic", thumb: "avatars/4.png", owned: false },
+    { id: "s5", group: "frames", name: "Шипы", price: 150, rarity: "rare", thumb: "frames/2.png", owned: false },
+    { id: "s6", group: "frames", name: "Рубин", price: 400, rarity: "epic", thumb: "frames/3.png", owned: false },
+    { id: "s7", group: "backgrounds", name: "Дракон", price: 80, rarity: "common", thumb: "backgrounds/2.png", owned: false },
+    { id: "s8", group: "backgrounds", name: "Змей", price: 250, rarity: "rare", thumb: "backgrounds/1.png", owned: false },
+    { id: "s9", group: "backgrounds", name: "Шипы", price: 600, rarity: "epic", thumb: "backgrounds/3.png", owned: false },
   ],
   REVIEWS: [
     { id: "r1", game: "Warfare 1942", gameHue: 98, gameCover: "games/warfare.png", rating: 4,
@@ -1265,7 +1266,12 @@ function ReviewRow({ review, isOwn, onEdit, onDelete }) {
    ============================================================ */
 
 /* Quest cards for main page (horizontal carousel) */
-function QuestCardsRow({ quests, points, onClaim, onNavigate }) {
+const ACTION_LABELS = {
+  nickname: "Изменить", status: "Написать", buy: "В магазин",
+  equip: "Настроить", share: "Поделиться", ad: "Смотреть",
+};
+
+function QuestCardsRow({ quests, points, onClaim, onNavigate, onAction }) {
   const scrollRef = useRef(null);
   const scroll = (dir) => {
     if (scrollRef.current) scrollRef.current.scrollBy({ left: dir * 240, behavior: "smooth" });
@@ -1274,16 +1280,15 @@ function QuestCardsRow({ quests, points, onClaim, onNavigate }) {
   const claimable = quests.filter(q => q.status === "completed");
 
   const DESCS = {
-    q1: "Придумай уникальное имя, чтобы другие игроки могли тебя найти",
-    q2: "Выбери аватар, который будет представлять тебя на платформе",
-    q3: "Расскажи миру, во что играешь или какое у тебя настроение",
-    q4: "Запусти любую игру из каталога и проведи в ней хотя бы минуту",
-    q5: "Поделись мнением об игре — это помогает другим игрокам",
-    q6: "Попробуй разные игры — открой для себя новые жанры",
-    q7: "Проводи время за любимыми играми — каждый час на счету",
-    q8: "Заходи на платформу каждый день и не прерывай серию",
-    q9: "Пиши отзывы — твоё мнение важно для сообщества",
-    q10: "Играй в игры разных категорий и расширяй кругозор",
+    q1: "Зайди в профиль — и получи первые points",
+    q2: "Загляни в магазин и купи первый предмет",
+    q3: "Примени купленную косметику к своему профилю",
+    q4: "Придумай уникальное имя, чтобы другие игроки могли тебя найти",
+    q5: "Расскажи миру, во что играешь или какое у тебя настроение",
+    q6: "Загляни в магазин и выбери что-нибудь ещё",
+    q7: "Зайди в редактор и примени купленную косметику",
+    q8: "Покажи друзьям свой обновлённый профиль",
+    q9: "Посмотри короткую рекламу и получи бонус",
   };
 
   return (
@@ -1356,7 +1361,10 @@ function QuestCardsRow({ quests, points, onClaim, onNavigate }) {
                     style={{ width: "100%", justifyContent: "center" }}>Забрать награду</Button>
                 ) : (
                   <Button variant="secondary" size="sm"
-                    style={{ width: "100%", justifyContent: "center" }}>Подробнее</Button>
+                    onClick={() => q.trigger && onAction?.(q)}
+                    style={{ width: "100%", justifyContent: "center" }}>
+                    {ACTION_LABELS[q.trigger] || "Подробнее"}
+                  </Button>
                 )}
               </div>
             </div>
@@ -1367,17 +1375,20 @@ function QuestCardsRow({ quests, points, onClaim, onNavigate }) {
   );
 }
 
-function QuestsSection({ quests, points, onClaim, onShowToast }) {
+function QuestsSection({ quests, points, onClaim, onAction }) {
   const claimable = quests.filter(q => q.status === "completed");
   const active = quests.filter(q => q.status === "active");
   const claimed = quests.filter(q => q.status === "claimed");
+  // Group claimed by block
+  const block0 = claimed.filter(q => q.block === 0);
+  const block1claimed = claimed.filter(q => q.block === 1);
   return (
     <section className="card" style={{ padding: 28 }}>
       <div className="row between" style={{ marginBottom: 22 }}>
         <div className="row" style={{ gap: 12, alignItems: "baseline" }}>
           <div className="h-2">Задания</div>
           <div style={{ fontSize: 22, color: "var(--text-3)", fontWeight: 600 }}>
-            {quests.filter(q => q.status !== "claimed").length}
+            {active.length + claimable.length}
           </div>
         </div>
         <div className="points-badge">
@@ -1386,25 +1397,29 @@ function QuestsSection({ quests, points, onClaim, onShowToast }) {
         </div>
       </div>
       <div className="col" style={{ gap: 8 }}>
-        {/* Claimable first */}
         {claimable.map(q => <QuestRow key={q.id} quest={q} onClaim={onClaim} />)}
-        {/* Active */}
-        {active.map(q => <QuestRow key={q.id} quest={q} />)}
-        {/* Completed/claimed - collapsed */}
-        {claimed.length > 0 && (
+        {active.map(q => <QuestRow key={q.id} quest={q} onAction={onAction} />)}
+        {block1claimed.length > 0 && (
           <div className="small muted" style={{ padding: "8px 0 4px" }}>
-            Выполнено: {claimed.length}
+            Выполнено: {block1claimed.length}
           </div>
         )}
-        {claimed.map(q => <QuestRow key={q.id} quest={q} />)}
+        {block1claimed.map(q => <QuestRow key={q.id} quest={q} />)}
+        {block0.length > 0 && (
+          <div className="small muted" style={{ padding: "12px 0 4px" }}>
+            Первый опыт: {block0.length}
+          </div>
+        )}
+        {block0.map(q => <QuestRow key={q.id} quest={q} />)}
       </div>
     </section>
   );
 }
 
-function QuestRow({ quest, onClaim }) {
+function QuestRow({ quest, onClaim, onAction }) {
   const done = quest.status === "claimed";
   const claimable = quest.status === "completed";
+  const active = quest.status === "active";
   const pct = Math.min(100, (quest.progress / quest.goal) * 100);
   const IconComp = Icons[quest.icon] || Icons.Star;
   return (
@@ -1442,6 +1457,11 @@ function QuestRow({ quest, onClaim }) {
           Забрать
         </Button>
       )}
+      {active && quest.trigger && (
+        <Button variant="ghost" size="sm" onClick={() => onAction?.(quest)}>
+          {ACTION_LABELS[quest.trigger] || "Выполнить"}
+        </Button>
+      )}
     </div>
   );
 }
@@ -1454,7 +1474,7 @@ function ShopSection({ items, points, onBuy }) {
     { value: "backgrounds", label: "Бэкграунды" },
   ];
   const filtered = items.filter(i => i.group === shopTab);
-  const RARITY_LABELS = { common: "Обычная", rare: "Редкая", exclusive: "Эксклюзив" };
+  const RARITY_LABELS = { common: "Обычная", rare: "Редкая", epic: "Эпическая" };
   return (
     <section className="card" style={{ padding: 28 }}>
       <div className="row between" style={{ marginBottom: 22 }}>
@@ -1476,9 +1496,9 @@ function ShopSection({ items, points, onBuy }) {
                   position: "absolute", top: 8, left: 8,
                   padding: "3px 10px", borderRadius: 99,
                   fontSize: 11, fontWeight: 700, letterSpacing: "0.02em",
-                  background: item.rarity === "exclusive" ? "rgba(255,178,61,0.2)" : "rgba(91,201,255,0.2)",
-                  color: item.rarity === "exclusive" ? "#FFB23D" : "#5BC9FF",
-                  border: `1px solid ${item.rarity === "exclusive" ? "rgba(255,178,61,0.3)" : "rgba(91,201,255,0.3)"}`,
+                  background: item.rarity === "epic" ? "rgba(255,178,61,0.2)" : "rgba(91,201,255,0.2)",
+                  color: item.rarity === "epic" ? "#FFB23D" : "#5BC9FF",
+                  border: `1px solid ${item.rarity === "epic" ? "rgba(255,178,61,0.3)" : "rgba(91,201,255,0.3)"}`,
                 }}>{RARITY_LABELS[item.rarity]}</span>
               )}
               {item.owned && (
@@ -1732,7 +1752,7 @@ function SettingsSection({ title, children }) {
   );
 }
 
-function SettingsPage({ profile, currentAvatar, currentFrame, onAvatarClick, onShowToast }) {
+function SettingsPage({ profile, currentAvatar, currentFrame, onAvatarClick, onShowToast, onEditNickname }) {
   const [notif, setNotif] = useState({ news: true, friends: true, achievements: false, marketing: false });
   const [hidden, setHidden] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -1760,7 +1780,7 @@ function SettingsPage({ profile, currentAvatar, currentFrame, onAvatarClick, onS
       </div>
       <SettingsSection title="Данные">
         <SettingsRow icon={<Icons.User size={16} />} title="Имя пользователя" hint={profile.username}
-          action={<Button variant="ghost" size="sm" icon={<Icons.ChevronRight size={14} />}> </Button>} />
+          action={<Button variant="ghost" size="sm" icon={<Icons.Edit size={14} />} onClick={onEditNickname}>Изменить</Button>} />
         <SettingsRow icon={<Icons.Calendar size={16} />} title="Дата регистрации" hint={`${profile.joinedYear} год`}
           action={<span className="small muted">не редактируется</span>} />
       </SettingsSection>
@@ -1898,6 +1918,51 @@ function TweaksPanel({ tweaks, setTweak }) {
 }
 
 /* ============================================================
+   Ad Modal (mock ad with countdown)
+   ============================================================ */
+function AdModal({ open, onClose, onComplete }) {
+  const [countdown, setCountdown] = useState(3);
+  const [done, setDone] = useState(false);
+
+  useEffect(() => {
+    if (!open) { setCountdown(3); setDone(false); return; }
+    if (countdown <= 0) { setDone(true); return; }
+    const timer = setTimeout(() => setCountdown(c => c - 1), 1000);
+    return () => clearTimeout(timer);
+  }, [open, countdown]);
+
+  return (
+    <Modal open={open} onClose={done ? () => { onComplete(); onClose(); } : undefined}>
+      <div style={{ textAlign: "center", padding: 20, minWidth: 320 }}>
+        {!done ? (
+          <>
+            <div className="h-2" style={{ marginBottom: 20 }}>Рекламная пауза</div>
+            <div style={{ width: 88, height: 88, borderRadius: "50%", margin: "0 auto 20px",
+              background: "rgba(107,88,255,0.12)", color: "var(--brand-soft)",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: 36, fontWeight: 700 }}>
+              {countdown}
+            </div>
+            <div className="dim">Подождите немного...</div>
+          </>
+        ) : (
+          <>
+            <div style={{ width: 88, height: 88, borderRadius: "50%", margin: "0 auto 16px",
+              background: "rgba(60,203,127,0.15)", color: "var(--ok)",
+              display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <Icons.Check size={36} />
+            </div>
+            <div className="h-2">Готово!</div>
+            <div className="dim" style={{ margin: "8px 0 20px" }}>Бонус за просмотр рекламы получен</div>
+            <Button variant="primary" onClick={() => { onComplete(); onClose(); }}>Отлично</Button>
+          </>
+        )}
+      </div>
+    </Modal>
+  );
+}
+
+/* ============================================================
    App — Root
    ============================================================ */
 const DEFAULT_LOOK = { avatar: "a5", frame: "ruby", background: "bg-serpent", effect: "fx-none" };
@@ -1918,8 +1983,42 @@ function App() {
   const [editReview, setEditReview] = useState(null);
   const [quests, setQuests] = useState(MOCK.QUESTS);
   const [shopItems, setShopItems] = useState(MOCK.SHOP);
-  const [points, setPoints] = useState(125);
+  const [points, setPoints] = useState(60);
+  const [purchaseCount, setPurchaseCount] = useState(1); // 1 from Block 0
+  const [equipCount, setEquipCount] = useState(1); // 1 from Block 0
+  const [editingNickname, setEditingNickname] = useState(false);
+  const [nicknameDraft, setNicknameDraft] = useState(MOCK.PROFILE_DATA.username);
+  const [watchingAd, setWatchingAd] = useState(false);
   const toast = useToast();
+
+  const completeQuest = (questId) => {
+    if (!quests.find(q => q.id === questId && q.status === "active")) return;
+    setQuests(prev => prev.map(q =>
+      q.id === questId && q.status === "active"
+        ? { ...q, status: "completed", progress: q.goal }
+        : q
+    ));
+    setTimeout(() => toast("Задание выполнено!", { kind: "ok" }), 350);
+  };
+
+  const updateQuestProgress = (questId, newProgress) => {
+    setQuests(prev => prev.map(q =>
+      q.id === questId && q.status === "active"
+        ? { ...q, progress: Math.min(newProgress, q.goal) }
+        : q
+    ));
+  };
+
+  const handleQuestAction = (quest) => {
+    switch (quest.trigger) {
+      case "nickname": setEditingNickname(true); setNicknameDraft(profile.username); break;
+      case "status": setEditingStatus(true); setStatusDraft(profile.status); break;
+      case "buy": setSection("shop"); break;
+      case "equip": setView("editor"); break;
+      case "share": toast("Ссылка скопирована", { kind: "ok" }); completeQuest("q8"); break;
+      case "ad": setWatchingAd(true); break;
+    }
+  };
 
   useEffect(() => { document.documentElement.style.setProperty("--brand", tweaks.accent); }, [tweaks.accent]);
   useEffect(() => { document.documentElement.setAttribute("data-density", tweaks.density); }, [tweaks.density]);
@@ -1952,16 +2051,21 @@ function App() {
       setPoints(p => p - item.price);
       setShopItems(shopItems.map(i => i.id === item.id ? { ...i, owned: true } : i));
       toast(`${item.name} — теперь в коллекции!`, { kind: "ok" });
+      const newCount = purchaseCount + 1;
+      setPurchaseCount(newCount);
+      updateQuestProgress("q6", newCount);
+      if (newCount >= 2) completeQuest("q6");
     };
 
     if (section === "settings") {
       return <SettingsPage profile={profile} currentAvatar={currentAvatar} currentFrame={currentFrame} onAvatarClick={() => setView("editor")}
-        onShowToast={(m, k) => toast(m, { kind: k })} />;
+        onShowToast={(m, k) => toast(m, { kind: k })}
+        onEditNickname={() => { setEditingNickname(true); setNicknameDraft(profile.username); }} />;
     }
     if (section === "quests") {
       return (
         <div className="col" style={{ gap: 24 }}>
-          <QuestsSection quests={quests} points={points} onClaim={handleClaim} />
+          <QuestsSection quests={quests} points={points} onClaim={handleClaim} onAction={handleQuestAction} />
         </div>
       );
     }
@@ -1986,7 +2090,7 @@ function App() {
             onEdit={r => setEditReview(r)} onDelete={r => setDeleteReview(r)} />}
           {mobileTab === "quests" && isOwn && (
             <div className="col" style={{ gap: 16 }}>
-              <QuestsSection quests={quests} points={points} onClaim={handleClaim} />
+              <QuestsSection quests={quests} points={points} onClaim={handleClaim} onAction={handleQuestAction} />
               <ShopSection items={shopItems} points={points} onBuy={handleBuy} />
             </div>
           )}
@@ -1997,7 +2101,7 @@ function App() {
     return (
       <div className="col" style={{ gap: 24 }}>
         {isOwn && <QuestCardsRow quests={quests} points={points} onClaim={handleClaim}
-          onNavigate={() => setSection("quests")} />}
+          onNavigate={() => setSection("quests")} onAction={handleQuestAction} />}
         <GamesCard games={MOCK.GAMES}
           onSelect={g => toast(`Открыть "${g.title}"`)} onShowMore={() => toast("Полный список игр")} />
         <ReviewsCard reviews={reviews} isOwn={isOwn}
@@ -2009,7 +2113,13 @@ function App() {
   const renderView = () => {
     if (view === "editor") {
       return <AvatarEditor initial={look}
-        onSave={d => { setLook(d); setView("profile"); }}
+        onSave={d => {
+          setLook(d); setView("profile");
+          const newCount = equipCount + 1;
+          setEquipCount(newCount);
+          updateQuestProgress("q7", newCount);
+          if (newCount >= 2) completeQuest("q7");
+        }}
         onCancel={() => setView("profile")}
         onShowToast={(m, k) => toast(m, { kind: k })} />;
     }
@@ -2037,7 +2147,7 @@ function App() {
           background={currentBg} isOwn={isOwn} isMobile={isMobile}
           onEditAvatar={() => setView("editor")}
           onEditStatus={() => { setStatusDraft(displayProfile.status); setEditingStatus(true); }}
-          onShare={() => toast("Ссылка скопирована", { kind: "ok" })}
+          onShare={() => { toast("Ссылка скопирована", { kind: "ok" }); completeQuest("q8"); }}
           onMobileSettings={() => setSection("settings")} />
         <div className="profile-grid">
           <SideRail active={section} onChange={setSection} isOwn={isOwn} />
@@ -2073,6 +2183,7 @@ function App() {
             <Button variant="primary" onClick={() => {
               setProfile({...profile, status: statusDraft}); setEditingStatus(false);
               toast("Статус сохранён", { kind: "ok" });
+              completeQuest("q5");
             }}>Применить</Button>
           </div>
         </div>
@@ -2089,6 +2200,28 @@ function App() {
           }}>Да, удалить</Button>
         </div>
       </Modal>
+
+      {/* Nickname editing modal */}
+      <Modal open={editingNickname} onClose={() => setEditingNickname(false)} title="Изменить никнейм">
+        <div className="small dim" style={{ marginBottom: 14 }}>Придумайте уникальное имя, чтобы другие игроки могли вас найти.</div>
+        <input className="input" autoFocus value={nicknameDraft} onChange={e => setNicknameDraft(e.target.value)}
+          maxLength={24} placeholder="Ваш никнейм" />
+        <div className="row between" style={{ marginTop: 16 }}>
+          <div className="small muted">{nicknameDraft.length} / 24</div>
+          <div className="row" style={{ gap: 10 }}>
+            <Button variant="ghost" onClick={() => setEditingNickname(false)}>Отмена</Button>
+            <Button variant="primary" onClick={() => {
+              setProfile({...profile, username: nicknameDraft}); setEditingNickname(false);
+              toast("Никнейм сохранён", { kind: "ok" });
+              completeQuest("q4");
+            }}>Сохранить</Button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Ad modal */}
+      <AdModal open={watchingAd} onClose={() => setWatchingAd(false)}
+        onComplete={() => completeQuest("q9")} />
 
       {/* Edit review modal */}
       <Modal open={!!editReview} onClose={() => setEditReview(null)} title="Редактирование отзыва">
